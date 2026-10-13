@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-outer-bg: #1F1E29;
+  --color-canvas-bg: #FFFFFF;
+  --color-text-main: #22212A;
+  --color-text-secondary: #777681;
+  --color-text-muted: #A2A0AA;
+  --color-border: #ECEBF0;
+  --color-surface: #F8F7FA;
+  --color-primary: #24232E;
+  --color-lavender: #F0EAF8;
+  --color-warm-pink: #FBF0EA;
+  --color-accent-purple: #A58BFA;
+}
+
+/* Outer Desktop Background: Deep Charcoal like Sniply screenshot */
+body {
+  background-color: #1F1E29;
+  color: #22212A;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* White Canvas Shell with subtle border */
+.saas-canvas {
+  background-color: #FFFFFF;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28), 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Subtle modern scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1F1E29;
+}
+::-webkit-scrollbar-thumb {
+  background: #444352;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5D5B6D;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Subtle floating animations */
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-subtle-float {
+  animation: subtleFloat 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-subtle-float {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
