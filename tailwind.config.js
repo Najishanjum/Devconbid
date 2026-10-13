@@ -25,10 +25,13 @@ export default {
           purple: '#A58BFA',
           green: '#2D9C70',
           amber: '#D89B30',
+          teal: '#008767',
+          tealBg: '#E6F7F2',
+          tealBorder: '#A7E8D6',
         }
       },
       fontFamily: {
-        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
       },
       boxShadow: {
         'saas-sm': '0 1px 2px rgba(15, 14, 23, 0.04)',

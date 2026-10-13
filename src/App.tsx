@@ -54,9 +54,6 @@ const MainLayout: React.FC = () => {
         {/* Section: Confirmed Sponsors Showcase */}
         <SponsorShowcaseSection />
 
-        {/* Section: Sponsorship Application Form (Inline) */}
-        <ApplicationFormModal isInline={true} />
-
         {/* Section: FAQs Accordion */}
         <FAQSection />
 

@@ -502,12 +502,22 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
             {errors.agreedTerms && <p className="text-[11px] text-red-600 mt-1">{errors.agreedTerms}</p>}
           </div>
 
-          {/* Submit Button */}
-          <div className="pt-2">
+          {/* Submit & Cancel Buttons */}
+          <div className="pt-2 flex items-center justify-end gap-3">
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="h-11 px-6 rounded-full border border-[#ECEBF0] text-xs font-semibold text-[#777681] hover:bg-[#F8F7FA] hover:text-[#22212A] transition-colors"
+              >
+                Cancel
+              </button>
+            )}
+
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-12 rounded-full bg-[#24232E] text-white text-xs font-medium hover:bg-[#353342] active:scale-[0.98] transition-all shadow-saas-sm flex items-center justify-center gap-2 disabled:opacity-60"
+              className="flex-1 sm:flex-none h-11 px-7 rounded-full bg-[#24232E] text-white text-xs font-semibold hover:bg-[#353342] active:scale-[0.98] transition-all shadow-saas-sm flex items-center justify-center gap-2 disabled:opacity-60"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#A58BFA]" />
               <span>{isSubmitting ? 'Recording Bid...' : `Submit Bid ($${bidAmount} USD)`}</span>
@@ -519,19 +529,15 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
     </div>
   );
 
-  if (isInline) {
-    return (
-      <section id="apply" className="py-20 px-6 sm:px-8 border-b border-[#ECEBF0]">
-        <div className="max-w-[820px] mx-auto">
-          {formContent}
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto animate-in fade-in">
-      <div className="relative w-full max-w-[720px] my-8">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm overflow-y-auto animate-in fade-in"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-[540px] my-6 max-h-[90vh] overflow-y-auto rounded-[24px]"
+      >
         {formContent}
       </div>
     </div>

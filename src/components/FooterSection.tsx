@@ -48,10 +48,11 @@ export const FooterSection: React.FC = () => {
 
           {/* Links Column 2 */}
           <div className="md:col-span-4 space-y-2.5 text-xs">
-            <span className="font-semibold text-[#22212A] block mb-1">Community & Admin</span>
-            <div><a href="https://x.com" target="_blank" rel="noreferrer" className="hover:text-[#22212A] transition-colors">𝕏 / Twitter</a></div>
-            <div><a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-[#22212A] transition-colors">GitHub Repository</a></div>
-            <div><a href="mailto:campaign@pocketbillboard.xyz" className="hover:text-[#22212A] transition-colors">Contact Email</a></div>
+            <span className="font-semibold text-[#22212A] block mb-1">Creator & Admin</span>
+            <div><a href="https://x.com/Najish_anjum" target="_blank" rel="noreferrer" className="hover:text-[#22212A] transition-colors">𝕏 @Najish_anjum</a></div>
+            <div><a href="https://t.me/Najish_anjum" target="_blank" rel="noreferrer" className="hover:text-[#22212A] transition-colors">Telegram @Najish_anjum</a></div>
+            <div><a href="https://github.com/Najishanjum" target="_blank" rel="noreferrer" className="hover:text-[#22212A] transition-colors">GitHub: Najishanjum</a></div>
+            <div><a href="mailto:najishanjum058@gmail.com" className="hover:text-[#22212A] transition-colors">najishanjum058@gmail.com</a></div>
             <div>
               <button onClick={() => setIsAdminOpen(true)} className="hover:text-[#22212A] transition-colors inline-flex items-center gap-1">
                 <ShieldCheck className="w-3 h-3 text-[#A2A0AA]" />

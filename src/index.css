@@ -55,7 +55,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Subtle floating animations */
+/* Subtle font and badge animations */
 @keyframes subtleFloat {
   0%, 100% {
     transform: translateY(0px);
@@ -65,12 +65,26 @@ html {
   }
 }
 
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 1px 3px rgba(0, 135, 103, 0.08);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(0, 135, 103, 0.22);
+  }
+}
+
 .animate-subtle-float {
   animation: subtleFloat 5s ease-in-out infinite;
 }
 
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-subtle-float {
+  .animate-subtle-float,
+  .animate-pulse-glow {
     animation: none;
   }
   html {

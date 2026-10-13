@@ -27,18 +27,21 @@ export const HeroSection: React.FC = () => {
         <span className="text-xs text-[#A2A0AA]">→</span>
       </div>
 
-      {/* Main SaaS Headline (Matching Sniply's large, clean, balanced typography) */}
+      {/* Main SaaS Headline (Matching the ticket system / Organiser reference style) */}
       <div className="max-w-3xl mx-auto space-y-4">
-        <h1 className="text-4xl sm:text-6xl md:text-[68px] font-semibold text-[#22212A] tracking-[-0.035em] leading-[1.08]">
-          Your logo, <br />
-          <span className="text-[#777681]">on my phone.</span>
+        <h1 className="text-4xl sm:text-6xl md:text-[68px] font-bold text-[#22212A] tracking-[-0.035em] leading-[1.12]">
+          Your logo, <br className="hidden sm:inline" />
+          on my{' '}
+          <span className="inline-flex items-center bg-[#E6F7F2] text-[#008767] border border-[#A7E8D6] px-4 py-0.5 sm:py-1 rounded-[22px] font-bold shadow-sm align-middle hover:scale-105 transition-transform duration-200 animate-pulse-glow">
+            phone.
+          </span>
         </h1>
 
-        <p className="text-base sm:text-lg text-[#777681] max-w-xl mx-auto leading-relaxed font-normal">
-          Two physical phone covers. Two sponsor spots. A new way for Web3 projects to show up in the real world.
+        <p className="text-base sm:text-lg text-[#52505C] max-w-xl mx-auto leading-relaxed font-normal">
+          Two physical iPhone 16 Pro back covers. Two sponsor spots. A new way for Web3 projects to show up in the real world.
         </p>
 
-        <p className="text-xs sm:text-sm text-[#A2A0AA] max-w-lg mx-auto leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#737180] max-w-lg mx-auto leading-relaxed">
           I'm bringing my phone to Devcon, IBW, and ETHGlobal. Sponsor a cover, get your approved logo printed, and travel with me through the builder community.
         </p>
       </div>
