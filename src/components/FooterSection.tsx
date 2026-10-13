@@ -23,8 +23,8 @@ export const FooterSection: React.FC = () => {
               <div className="w-7 h-7 rounded-full bg-[#24232E] flex items-center justify-center text-white">
                 <div className="w-2 h-2 rounded-sm bg-[#A58BFA] rotate-45" />
               </div>
-              <span className="text-sm font-semibold tracking-tight text-[#22212A]">
-                POCKETBILLBOARD
+              <span className="text-sm font-bold tracking-tight text-[#22212A]">
+                Backsy
               </span>
             </div>
             <p className="text-xs text-[#777681] max-w-sm leading-relaxed">
@@ -66,7 +66,7 @@ export const FooterSection: React.FC = () => {
         {/* Bottom Footer Row */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#A2A0AA]">
           <div>
-            © {currentYear} POCKETBILLBOARD. All rights reserved.
+            © {currentYear} Backsy. All rights reserved.
           </div>
 
           <button
@@ -80,7 +80,7 @@ export const FooterSection: React.FC = () => {
 
         {/* Disclaimer */}
         <div className="mt-4 pt-3 text-[11px] text-[#A2A0AA] leading-relaxed">
-          POCKETBILLBOARD is an independent personal creator initiative. It is not affiliated with, sponsored by, or endorsed by the Ethereum Foundation, Devcon, India Blockchain Week (IBW), or ETHGlobal.
+          Backsy is an independent personal creator initiative. It is not affiliated with, sponsored by, or endorsed by the Ethereum Foundation, Devcon, India Blockchain Week (IBW), or ETHGlobal.
         </div>
 
       </div>

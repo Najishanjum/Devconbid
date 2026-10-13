@@ -1,4 +1,4 @@
-# POCKETBILLBOARD — Premium Web3 Phone Cover Sponsorship Platform
+# Backsy — Premium Web3 Phone Cover Sponsorship Platform
 
 > **A minimal, elegant SaaS design for an independent physical phone-cover sponsorship auction targeting Devcon, India Blockchain Week (IBW), and ETHGlobal.**
 

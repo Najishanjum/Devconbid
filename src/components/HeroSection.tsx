@@ -16,16 +16,6 @@ export const HeroSection: React.FC = () => {
   return (
     <section id="hero" className="relative pt-12 pb-16 px-6 sm:px-8 text-center flex flex-col items-center">
       
-      {/* Top Rounded Announcement Pill (directly matching Sniply reference pill) */}
-      <div className="mb-6 inline-flex items-center gap-2 bg-white border border-[#ECEBF0] px-4 py-1.5 rounded-full shadow-saas-sm hover:border-[#DDDCE3] transition-colors cursor-default">
-        <span className="text-xs">🚀</span>
-        <span className="text-xs font-medium text-[#22212A]">
-          Independent creator sponsorship
-        </span>
-        <span className="text-xs text-[#A2A0AA]">·</span>
-        <span className="text-xs text-[#777681]">Mumbai Web3 events</span>
-        <span className="text-xs text-[#A2A0AA]">→</span>
-      </div>
 
       {/* Main SaaS Headline (Matching the ticket system / Organiser reference style) */}
       <div className="max-w-3xl mx-auto space-y-4">
@@ -41,9 +31,34 @@ export const HeroSection: React.FC = () => {
           Two physical iPhone 16 Pro back covers. Two sponsor spots. A new way for Web3 projects to show up in the real world.
         </p>
 
-        <p className="text-xs sm:text-sm text-[#737180] max-w-lg mx-auto leading-relaxed">
-          I'm bringing my phone to Devcon, IBW, and ETHGlobal. Sponsor a cover, get your approved logo printed, and travel with me through the builder community.
-        </p>
+        {/* Highlighted & Brightened Sponsorship Tour Callout */}
+        <div className="mt-5 max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#C4B5FD] shadow-[0_8px_30px_rgba(139,92,246,0.16)] hover:shadow-[0_12px_36px_rgba(139,92,246,0.24)] transition-all duration-300">
+          <div className="flex items-center justify-center gap-1.5 mb-2">
+            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#6D28D9]">
+              Physical Sponsorship Tour
+            </span>
+            <Sparkles className="w-4 h-4 text-[#7C3AED] animate-pulse" />
+          </div>
+          <p className="text-sm sm:text-base font-semibold text-[#18181B] leading-relaxed">
+            I'm bringing my phone to{' '}
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg font-bold text-[#6D28D9] bg-[#EDE9FE] border border-[#DDD6FE] shadow-sm mx-1">
+              Devcon
+            </span>
+            ,{' '}
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg font-bold text-[#047857] bg-[#ECFDF5] border border-[#A7F3D0] shadow-sm mx-1">
+              IBW
+            </span>
+            , and{' '}
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg font-bold text-[#1D4ED8] bg-[#EFF6FF] border border-[#BFDBFE] shadow-sm mx-1">
+              ETHGlobal
+            </span>
+            .{' '}
+            <span className="text-[#374151] font-medium block sm:inline mt-1 sm:mt-0">
+              Sponsor a cover, get your approved logo printed, and travel with me through the builder community.
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Primary & Secondary CTA Buttons */}
@@ -78,9 +93,9 @@ export const HeroSection: React.FC = () => {
         {/* Centered Minimal Brand Pill Divider */}
         <div className="flex items-center justify-center gap-3 mb-8">
           <div className="h-[1px] w-12 sm:w-20 bg-[#ECEBF0]" />
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#ECEBF0] text-[11px] font-medium text-[#777681] shadow-saas-sm">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#ECEBF0] text-[11px] font-semibold tracking-wider text-[#777681] shadow-saas-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-[#A58BFA]" />
-            <span>POCKETBILLBOARD</span>
+            <span>BACKSY</span>
           </div>
           <div className="h-[1px] w-12 sm:w-20 bg-[#ECEBF0]" />
         </div>

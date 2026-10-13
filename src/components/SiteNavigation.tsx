@@ -43,13 +43,13 @@ export const SiteNavigation: React.FC = () => {
           <a 
             href="#hero" 
             className="group flex items-center gap-2.5 transition-opacity hover:opacity-85"
-            title="POCKETBILLBOARD Home"
+            title="Backsy Home"
           >
             <div className="w-8 h-8 rounded-full bg-[#24232E] flex items-center justify-center text-white shadow-sm">
               <div className="w-2.5 h-2.5 rounded-sm bg-[#A58BFA] rotate-45" />
             </div>
-            <span className="text-[15px] font-semibold tracking-tight text-[#22212A]">
-              POCKETBILLBOARD
+            <span className="text-[15px] font-bold tracking-tight text-[#22212A]">
+              Backsy
             </span>
           </a>
         </div>

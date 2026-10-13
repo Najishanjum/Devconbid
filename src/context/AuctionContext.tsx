@@ -390,7 +390,7 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `pocketbillboard_applications_${Date.now()}.csv`);
+    link.setAttribute('download', `backsy_applications_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -404,7 +404,7 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(applications, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `pocketbillboard_data_${Date.now()}.json`);
+    downloadAnchor.setAttribute('download', `backsy_data_${Date.now()}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
