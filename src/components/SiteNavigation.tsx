@@ -12,7 +12,6 @@ export const SiteNavigation: React.FC = () => {
     { name: 'Auction', href: '#auction' },
     { name: '3D Configurator', href: '#configurator' },
     { name: 'Sponsor Perks', href: '#perks', isPerksTrigger: true },
-    { name: 'Where It Goes', href: '#events' },
     { name: 'FAQs', href: '#faq' },
   ];
 

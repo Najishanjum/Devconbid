@@ -62,7 +62,6 @@ export const FooterSection: React.FC = () => {
                 Sponsor Perks
               </button>
             </div>
-            <div><a href="#events" className="hover:text-[#22212A] transition-colors">Where the Phone Goes</a></div>
             <div><a href="#faq" className="hover:text-[#22212A] transition-colors">FAQs</a></div>
           </div>
 

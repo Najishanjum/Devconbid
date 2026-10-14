@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { PhoneMockup } from './PhoneMockup';
-import { ArrowRight, Sparkles, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 
 export const HeroSection: React.FC = () => {
   const { covers, setIsBidModalOpen, setSelectedCoverForBid } = useAuction();
@@ -78,35 +78,6 @@ export const HeroSection: React.FC = () => {
           <span className="inline-block bg-[#EAEAEA] text-[#18181B] px-2.5 py-0.5 rounded-[6px] font-semibold text-sm sm:text-base border border-[#E0E0E0] shadow-xs align-baseline">
             Devcon, IBW, and ETHGlobal
           </span>
-        </div>
-
-        {/* Physical Sponsorship Tour Card with clean image-styled typography */}
-        <div className="mt-6 max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl bg-white border border-[#E4E4E7] shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.1)] transition-all duration-300">
-          <div className="flex items-center justify-center gap-1.5 mb-2">
-            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-            <span className="text-[12px] font-bold uppercase tracking-wider text-[#18181B]">
-              Physical Sponsorship Tour
-            </span>
-            <Sparkles className="w-4 h-4 text-[#7C3AED] animate-pulse" />
-          </div>
-          <p className="text-sm sm:text-base text-[#27272A] leading-relaxed font-normal">
-            I'm bringing my phone to{' '}
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-[#18181B] bg-[#F4F4F5] border border-[#E4E4E7] mx-0.5">
-              Devcon
-            </span>
-            ,{' '}
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-[#18181B] bg-[#F4F4F5] border border-[#E4E4E7] mx-0.5">
-              IBW
-            </span>
-            , and{' '}
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-[#18181B] bg-[#F4F4F5] border border-[#E4E4E7] mx-0.5">
-              ETHGlobal
-            </span>
-            .{' '}
-            <span className="text-[#52525B] font-medium block sm:inline mt-1 sm:mt-0">
-              Sponsor a cover, get your approved logo printed, and travel with me through the builder community.
-            </span>
-          </p>
         </div>
       </div>
 

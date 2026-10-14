@@ -7,8 +7,6 @@ import { HowItWorksSection } from './components/HowItWorksSection';
 import { WhyYouShouldSection } from './components/WhyYouShouldSection';
 import { AuctionSection } from './components/AuctionSection';
 import { Phone3DSection } from './components/Phone3DSection';
-import { PerksSection } from './components/PerksSection';
-import { EventsSection } from './components/EventsSection';
 import { AboutSection } from './components/AboutSection';
 import { SponsorShowcaseSection } from './components/SponsorShowcaseSection';
 import { ApplicationFormModal } from './components/ApplicationFormModal';
@@ -48,12 +46,6 @@ const MainLayout: React.FC = () => {
 
         {/* Section: Interactive 3D Phone Viewer — NEW */}
         <Phone3DSection />
-
-        {/* Section: Sponsor Perks */}
-        <PerksSection />
-
-        {/* Section: Connected Event Journey */}
-        <EventsSection />
 
         {/* Section: About the Creator */}
         <AboutSection />
