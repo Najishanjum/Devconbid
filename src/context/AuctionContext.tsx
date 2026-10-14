@@ -19,18 +19,11 @@ interface AuctionContextType {
   setIsPerksOpen: (open: boolean) => void;
   activeHistoryCoverId: 'cover-01' | 'cover-02';
   openHistoryFor: (coverId: 'cover-01' | 'cover-02') => void;
-  isAdminOpen: boolean;
-  setIsAdminOpen: (open: boolean) => void;
   
   // Actions
   submitBid: (formData: Omit<SponsorApplication, 'id' | 'status' | 'submittedAt'>) => { success: boolean; message: string; refId?: string };
   loadSampleDemoData: () => void;
   resetToCleanState: () => void;
-  updateCoverStatus: (coverId: 'cover-01' | 'cover-02', status: PhoneCover['status']) => void;
-  approveApplication: (appId: string) => void;
-  rejectApplication: (appId: string) => void;
-  exportApplicationsCSV: () => void;
-  exportApplicationsJSON: () => void;
 }
 
 const AuctionContext = createContext<AuctionContextType | undefined>(undefined);
@@ -85,7 +78,6 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isPerksOpen, setIsPerksOpen] = useState(false);
   const [activeHistoryCoverId, setActiveHistoryCoverId] = useState<'cover-01' | 'cover-02'>('cover-01');
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Sync to local storage
   useEffect(() => {
@@ -114,46 +106,62 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const submitBid = (formData: Omit<SponsorApplication, 'id' | 'status' | 'submittedAt'>) => {
-    // 1. Validation against current bids
-    const { preferredCover, bidAmount, projectName } = formData;
-    
+    const { preferredCover, bidAmount, fullName, workEmail, agreedTerms } = formData;
+
+    // 1. Basic validation
+    if (!fullName || !fullName.trim()) {
+      return { success: false, message: 'Please provide your full name or bidder display name.' };
+    }
+    if (!workEmail || !workEmail.includes('@')) {
+      return { success: false, message: 'Please provide a valid contact email address.' };
+    }
+    if (!agreedTerms) {
+      return { success: false, message: 'You must agree to the sponsorship and bidding terms.' };
+    }
+
+    const bidderDisplayName = fullName.trim();
+    const cover1 = covers.find(c => c.id === 'cover-01')!;
+    const cover2 = covers.find(c => c.id === 'cover-02')!;
+
+    // 2. Cover availability & auction status validation
     if (preferredCover === '01') {
-      const cover = covers.find(c => c.id === 'cover-01');
-      if (cover) {
-        if (cover.bidsCount > 0 && bidAmount <= cover.currentBid) {
-          return { success: false, message: `Your bid ($${bidAmount}) must exceed the current highest bid ($${cover.currentBid}).` };
-        }
-        if (bidAmount < cover.startingBid) {
-          return { success: false, message: `Starting bid for Cover 01 is $${cover.startingBid}.` };
-        }
+      if (cover1.status !== 'OPEN') {
+        return { success: false, message: `Cover 01 is currently ${cover1.status.toLowerCase().replace('_', ' ')} and not accepting new bids.` };
+      }
+      if (cover1.bidsCount > 0 && bidAmount <= cover1.currentBid) {
+        return { success: false, message: `Your bid ($${bidAmount}) must exceed the current highest bid ($${cover1.currentBid}).` };
+      }
+      if (bidAmount < cover1.startingBid) {
+        return { success: false, message: `Starting bid for Cover 01 is $${cover1.startingBid}.` };
       }
     } else if (preferredCover === '02') {
-      const cover = covers.find(c => c.id === 'cover-02');
-      if (cover) {
-        if (cover.bidsCount > 0 && bidAmount <= cover.currentBid) {
-          return { success: false, message: `Your bid ($${bidAmount}) must exceed the current highest bid ($${cover.currentBid}).` };
-        }
-        if (bidAmount < cover.startingBid) {
-          return { success: false, message: `Starting bid for Cover 02 is $${cover.startingBid}.` };
-        }
+      if (cover2.status !== 'OPEN') {
+        return { success: false, message: `Cover 02 is currently ${cover2.status.toLowerCase().replace('_', ' ')} and not accepting new bids.` };
+      }
+      if (cover2.bidsCount > 0 && bidAmount <= cover2.currentBid) {
+        return { success: false, message: `Your bid ($${bidAmount}) must exceed the current highest bid ($${cover2.currentBid}).` };
+      }
+      if (bidAmount < cover2.startingBid) {
+        return { success: false, message: `Starting bid for Cover 02 is $${cover2.startingBid}.` };
       }
     } else if (preferredCover === 'both') {
-      const cover1 = covers.find(c => c.id === 'cover-01')!;
-      const cover2 = covers.find(c => c.id === 'cover-02')!;
+      if (cover1.status !== 'OPEN' || cover2.status !== 'OPEN') {
+        return { success: false, message: 'Both covers must be open to place a combined takeover bid.' };
+      }
       const minBoth = (cover1.bidsCount > 0 ? cover1.currentBid : cover1.startingBid) + 
                       (cover2.bidsCount > 0 ? cover2.currentBid : cover2.startingBid);
       if (bidAmount <= minBoth && (cover1.bidsCount > 0 || cover2.bidsCount > 0)) {
-        return { success: false, message: `Combined takeover bid ($${bidAmount}) must be greater than combined current value ($${minBoth}).` };
+        return { success: false, message: `Combined takeover bid ($${bidAmount}) must exceed the combined current value ($${minBoth}).` };
       }
       if (bidAmount < 50) {
-        return { success: false, message: 'Combined starting bid for both covers is $50 minimum ($25 each).' };
+        return { success: false, message: 'Combined starting bid for both covers is $50 minimum ($25 per cover).' };
       }
     }
 
     const refId = `BID-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     const timestamp = new Date().toISOString();
 
-    // Create application
+    // Create application record
     const newApp: SponsorApplication = {
       ...formData,
       id: refId,
@@ -161,16 +169,16 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       submittedAt: timestamp,
     };
 
-    // Create bid record
+    // Create itemized bid records
     const newBids: BidRecord[] = [];
     if (preferredCover === '01' || preferredCover === 'both') {
+      const slotAmount = preferredCover === 'both' ? Math.round(bidAmount / 2) : bidAmount;
       newBids.push({
         id: `${refId}-01`,
         coverId: 'cover-01',
-        coverSlotDisplay: 'COVER 01 / SLOT A',
-        projectName,
-        projectWebsite: formData.projectWebsite,
-        amount: preferredCover === 'both' ? Math.round(bidAmount / 2) : bidAmount,
+        coverSlotDisplay: 'COVER 01 / UPPER SHELL',
+        projectName: bidderDisplayName,
+        amount: slotAmount,
         timestamp,
         isVerified: true,
         status: 'CONFIRMED'
@@ -178,27 +186,26 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
 
     if (preferredCover === '02' || preferredCover === 'both') {
+      const slotAmount = preferredCover === 'both' ? Math.round(bidAmount / 2) : bidAmount;
       newBids.push({
         id: `${refId}-02`,
         coverId: 'cover-02',
-        coverSlotDisplay: 'COVER 02 / SLOT B',
-        projectName,
-        projectWebsite: formData.projectWebsite,
-        amount: preferredCover === 'both' ? Math.round(bidAmount / 2) : bidAmount,
+        coverSlotDisplay: 'COVER 02 / LOWER SHELL',
+        projectName: bidderDisplayName,
+        amount: slotAmount,
         timestamp,
         isVerified: true,
         status: 'CONFIRMED'
       });
     }
 
-    // Update covers
+    // Update covers state
     setCovers(prev => prev.map(cover => {
       if (preferredCover === '01' && cover.id === 'cover-01') {
         return {
           ...cover,
           currentBid: bidAmount,
-          highestBidder: projectName,
-          highestBidderWebsite: formData.projectWebsite,
+          highestBidder: bidderDisplayName,
           bidsCount: cover.bidsCount + 1,
         };
       }
@@ -206,8 +213,7 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return {
           ...cover,
           currentBid: bidAmount,
-          highestBidder: projectName,
-          highestBidderWebsite: formData.projectWebsite,
+          highestBidder: bidderDisplayName,
           bidsCount: cover.bidsCount + 1,
         };
       }
@@ -216,8 +222,7 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return {
           ...cover,
           currentBid: halfBid,
-          highestBidder: `${projectName} (Dual Takeover)`,
-          highestBidderWebsite: formData.projectWebsite,
+          highestBidder: `${bidderDisplayName} (Dual Takeover)`,
           bidsCount: cover.bidsCount + 1,
         };
       }
@@ -227,7 +232,7 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setApplications(prev => [newApp, ...prev]);
     setBids(prev => [...newBids, ...prev]);
 
-    // Fire confetti celebration!
+    // Fire confetti celebration
     try {
       confetti({
         particleCount: 120,
@@ -241,21 +246,9 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     return {
       success: true,
-      message: `Bid for ${projectName} submitted successfully! Reference: ${refId}`,
+      message: `Bid for ${bidderDisplayName} recorded successfully! Reference: ${refId}`,
       refId
     };
-  };
-
-  const updateCoverStatus = (coverId: 'cover-01' | 'cover-02', status: PhoneCover['status']) => {
-    setCovers(prev => prev.map(c => c.id === coverId ? { ...c, status } : c));
-  };
-
-  const approveApplication = (appId: string) => {
-    setApplications(prev => prev.map(app => app.id === appId ? { ...app, status: 'ACCEPTED' } : app));
-  };
-
-  const rejectApplication = (appId: string) => {
-    setApplications(prev => prev.map(app => app.id === appId ? { ...app, status: 'REJECTED' } : app));
   };
 
   const resetToCleanState = () => {
@@ -277,15 +270,13 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       {
         ...INITIAL_COVERS[0],
         currentBid: 65,
-        highestBidder: 'ZK-Rollup Labs',
-        highestBidderWebsite: 'https://zkrollup.example.com',
+        highestBidder: 'Alice Vance',
         bidsCount: 3,
       },
       {
         ...INITIAL_COVERS[1],
         currentBid: 45,
-        highestBidder: 'Orbit Wallet',
-        highestBidderWebsite: 'https://orbitwallet.example.com',
+        highestBidder: 'David Chen',
         bidsCount: 2,
       }
     ];
@@ -294,9 +285,8 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       {
         id: 'DEMO-1',
         coverId: 'cover-01',
-        coverSlotDisplay: 'COVER 01 / SLOT A',
-        projectName: 'ZK-Rollup Labs',
-        projectWebsite: 'https://zkrollup.example.com',
+        coverSlotDisplay: 'COVER 01 / UPPER SHELL',
+        projectName: 'Alice Vance',
         amount: 65,
         timestamp: new Date(Date.now() - 3600000 * 4).toISOString(),
         isVerified: true,
@@ -305,9 +295,8 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       {
         id: 'DEMO-2',
         coverId: 'cover-01',
-        coverSlotDisplay: 'COVER 01 / SLOT A',
-        projectName: 'Aura Protocol',
-        projectWebsite: 'https://aura.example.com',
+        coverSlotDisplay: 'COVER 01 / UPPER SHELL',
+        projectName: 'Devon Miles',
         amount: 40,
         timestamp: new Date(Date.now() - 3600000 * 12).toISOString(),
         isVerified: true,
@@ -316,9 +305,8 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       {
         id: 'DEMO-3',
         coverId: 'cover-02',
-        coverSlotDisplay: 'COVER 02 / SLOT B',
-        projectName: 'Orbit Wallet',
-        projectWebsite: 'https://orbitwallet.example.com',
+        coverSlotDisplay: 'COVER 02 / LOWER SHELL',
+        projectName: 'David Chen',
         amount: 45,
         timestamp: new Date(Date.now() - 3600000 * 6).toISOString(),
         isVerified: true,
@@ -327,9 +315,8 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       {
         id: 'DEMO-4',
         coverId: 'cover-02',
-        coverSlotDisplay: 'COVER 02 / SLOT B',
-        projectName: 'NodeFleet CLI',
-        projectWebsite: 'https://nodefleet.example.com',
+        coverSlotDisplay: 'COVER 02 / LOWER SHELL',
+        projectName: 'Sarah Lin',
         amount: 30,
         timestamp: new Date(Date.now() - 3600000 * 20).toISOString(),
         isVerified: true,
@@ -337,77 +324,8 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
     ];
 
-    const demoSponsors: ConfirmedSponsor[] = [
-      {
-        id: 'sponsor-1',
-        projectName: 'ETHMumbai Builders',
-        tagline: 'Grassroots Web3 Developer Collective',
-        coverSlot: 'COVER 01',
-        events: 'Devcon + IBW Circuit',
-        website: 'https://ethmumbai.example.org',
-        themeStyle: 'yellow',
-        logoPlaceholder: '⚡ ETH MUMBAI',
-        status: 'PRINT APPROVED'
-      },
-      {
-        id: 'sponsor-2',
-        projectName: 'GasTank Relay',
-        tagline: 'Instant Gasless Transactions on Base & Arb',
-        coverSlot: 'COVER 02',
-        events: 'Devcon Southeast Asia',
-        website: 'https://gastank.example.com',
-        themeStyle: 'cobalt',
-        logoPlaceholder: '⛽ GASTANK',
-        status: 'PRINT APPROVED'
-      }
-    ];
-
     setCovers(demoCovers);
     setBids(demoBids);
-    setConfirmedSponsors(demoSponsors);
-  };
-
-  const exportApplicationsCSV = () => {
-    if (applications.length === 0) {
-      alert('No applications to export yet.');
-      return;
-    }
-    const headers = ['ID', 'Full Name', 'Email', 'Project Name', 'Website', 'X Handle', 'Cover', 'Bid Amount ($)', 'Events', 'Status', 'Submitted At'];
-    const rows = applications.map(app => [
-      app.id,
-      `"${app.fullName}"`,
-      `"${app.workEmail}"`,
-      `"${app.projectName}"`,
-      `"${app.projectWebsite}"`,
-      `"${app.xHandle}"`,
-      `"${app.preferredCover}"`,
-      app.bidAmount,
-      `"${app.preferredEvents.join(';')}"`,
-      app.status,
-      `"${app.submittedAt}"`,
-    ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `backsy_applications_${Date.now()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const exportApplicationsJSON = () => {
-    if (applications.length === 0) {
-      alert('No applications to export yet.');
-      return;
-    }
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(applications, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `backsy_data_${Date.now()}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
   };
 
   return (
@@ -428,16 +346,9 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setIsPerksOpen,
         activeHistoryCoverId,
         openHistoryFor,
-        isAdminOpen,
-        setIsAdminOpen,
         submitBid,
         loadSampleDemoData,
         resetToCleanState,
-        updateCoverStatus,
-        approveApplication,
-        rejectApplication,
-        exportApplicationsCSV,
-        exportApplicationsJSON,
       }}
     >
       {children}

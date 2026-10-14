@@ -25,8 +25,8 @@ export interface BidRecord {
   id: string;
   coverId: 'cover-01' | 'cover-02' | 'both';
   coverSlotDisplay: string;
-  projectName: string;
-  projectWebsite: string;
+  projectName: string; // Bidder display name or project name
+  projectWebsite?: string;
   amount: number;
   timestamp: string;
   isVerified: boolean;
@@ -37,13 +37,13 @@ export interface SponsorApplication {
   id: string;
   fullName: string;
   workEmail: string;
-  projectName: string;
-  projectWebsite: string;
-  xHandle: string;
-  projectDescription: string;
+  projectName?: string;
+  projectWebsite?: string;
+  xHandle?: string;
+  projectDescription?: string;
   logoDataUrl?: string;
   preferredCover: CoverSlot;
-  preferredEvents: string[];
+  preferredEvents?: string[];
   bidAmount: number;
   note?: string;
   agreedTerms: boolean;

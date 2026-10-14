@@ -32,10 +32,10 @@ export const BidHistoryModal: React.FC = () => {
         <div className="flex items-center justify-between pb-4 border-b border-[#ECEBF0]">
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[#A58BFA] block">
-              Public Bid Log
+              Live Bid History
             </span>
             <h3 className="text-xl font-semibold text-[#22212A] tracking-tight">
-              {activeHistoryCoverId === 'cover-01' ? 'Cover 01 (Slot A)' : 'Cover 02 (Slot B)'}
+              {activeHistoryCoverId === 'cover-01' ? 'Cover 01 · Upper Shell' : 'Cover 02 · Lower Shell'}
             </h3>
           </div>
 
@@ -74,7 +74,7 @@ export const BidHistoryModal: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-[#22212A]">
-                      {bid.projectName}
+                      {bid.projectName /* bidder display name */}
                     </span>
                     {idx === 0 && (
                       <span className="bg-[#F0EAF8] text-[#24232E] text-[10px] font-semibold px-2 py-0.2 rounded-full">
@@ -104,7 +104,7 @@ export const BidHistoryModal: React.FC = () => {
         {/* Footer */}
         <div className="pt-4 border-t border-[#ECEBF0] flex items-center justify-between gap-3">
           <span className="text-[11px] text-[#A2A0AA]">
-            Applicant emails remain strictly confidential.
+            Contact emails remain strictly confidential.
           </span>
 
           <button

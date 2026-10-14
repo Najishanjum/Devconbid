@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { CoverSlot } from '../types';
-import { X, Upload, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { X, CheckCircle2, AlertCircle, Sparkles, Upload } from 'lucide-react';
 
 interface ApplicationFormModalProps {
   isOpen?: boolean;
@@ -21,12 +21,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
 
   const [fullName, setFullName] = useState('');
   const [workEmail, setWorkEmail] = useState('');
-  const [projectName, setProjectName] = useState('');
-  const [projectWebsite, setProjectWebsite] = useState('');
-  const [xHandle, setXHandle] = useState('');
-  const [projectDescription, setProjectDescription] = useState('');
   const [preferredCover, setPreferredCover] = useState<CoverSlot>(selectedCoverForBid);
-  const [selectedEvents, setSelectedEvents] = useState<string[]>(['DEVCON', 'IBW_MUMBAI']);
   const [bidAmount, setBidAmount] = useState<number>(25);
   const [note, setNote] = useState('');
   const [agreedTerms, setAgreedTerms] = useState(false);
@@ -41,19 +36,20 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
     setPreferredCover(selectedCoverForBid);
   }, [selectedCoverForBid]);
 
+  // Update default minimum bid amount whenever selected cover changes
   useEffect(() => {
     if (preferredCover === '01') {
-      const min = cover01.bidsCount > 0 ? cover01.currentBid + 5 : 25;
+      const min = cover01.bidsCount > 0 ? cover01.currentBid + 5 : cover01.startingBid;
       setBidAmount(min);
     } else if (preferredCover === '02') {
-      const min = cover02.bidsCount > 0 ? cover02.currentBid + 5 : 25;
+      const min = cover02.bidsCount > 0 ? cover02.currentBid + 5 : cover02.startingBid;
       setBidAmount(min);
     } else {
       const minBoth = (cover01.bidsCount > 0 ? cover01.currentBid : 25) + 
                       (cover02.bidsCount > 0 ? cover02.currentBid : 25);
-      setBidAmount(Math.max(50, minBoth));
+      setBidAmount(Math.max(50, minBoth > 50 ? minBoth + 10 : 50));
     }
-  }, [preferredCover, cover01.currentBid, cover02.currentBid, cover01.bidsCount, cover02.bidsCount]);
+  }, [preferredCover, cover01.currentBid, cover02.currentBid, cover01.bidsCount, cover02.bidsCount, cover01.startingBid, cover02.startingBid]);
 
   if (!isOpen && !isInline) return null;
 
@@ -85,43 +81,61 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
     reader.readAsDataURL(file);
   };
 
-  const handleEventToggle = (eventName: string) => {
-    if (selectedEvents.includes(eventName)) {
-      if (selectedEvents.length === 1) return;
-      setSelectedEvents(selectedEvents.filter(e => e !== eventName));
-    } else {
-      setSelectedEvents([...selectedEvents, eventName]);
+  const getMinBidText = () => {
+    if (preferredCover === '01') {
+      return cover01.bidsCount > 0
+        ? `Minimum valid next bid: >$${cover01.currentBid} (Current high: $${cover01.currentBid})`
+        : `Starting bid: $${cover01.startingBid}`;
     }
+    if (preferredCover === '02') {
+      return cover02.bidsCount > 0
+        ? `Minimum valid next bid: >$${cover02.currentBid} (Current high: $${cover02.currentBid})`
+        : `Starting bid: $${cover02.startingBid}`;
+    }
+    const currentCombined = (cover01.bidsCount > 0 ? cover01.currentBid : 25) +
+                            (cover02.bidsCount > 0 ? cover02.currentBid : 25);
+    return `Combined starting bid: $50 ($25/cover). Minimum valid next bid: >$${currentCombined}`;
   };
 
   const validateForm = () => {
     const errs: Record<string, string> = {};
 
-    if (!fullName.trim()) errs.fullName = 'Full name is required.';
-    if (!workEmail.trim() || !workEmail.includes('@')) errs.workEmail = 'Valid work email is required.';
-    if (!projectName.trim()) errs.projectName = 'Project name is required.';
-    if (!projectWebsite.trim() || !projectWebsite.includes('.')) errs.projectWebsite = 'Valid project website URL is required.';
-    if (!xHandle.trim()) errs.xHandle = 'X/Twitter handle is required.';
-    if (!projectDescription.trim()) errs.projectDescription = 'Short project description is required.';
-    if (!agreedTerms) errs.agreedTerms = 'You must agree to the sponsorship terms.';
+    if (!fullName.trim()) errs.fullName = 'Full name or bidder display name is required.';
+    if (!workEmail.trim() || !workEmail.includes('@') || !workEmail.includes('.')) {
+      errs.workEmail = 'A valid email address is required so we can contact you.';
+    }
+    if (!agreedTerms) {
+      errs.agreedTerms = 'You must agree to the bidding and sponsorship terms.';
+    }
 
+    // Cover auction availability check
     if (preferredCover === '01') {
-      if (bidAmount < 25) errs.bidAmount = 'Starting bid for Cover 01 is $25.';
-      else if (cover01.bidsCount > 0 && bidAmount <= cover01.currentBid) {
-        errs.bidAmount = `Bid must exceed current highest bid of $${cover01.currentBid}.`;
+      if (cover01.status !== 'OPEN') {
+        errs.cover = 'Cover 01 is currently not open for new bids.';
+      } else if (bidAmount < cover01.startingBid) {
+        errs.bidAmount = `Starting bid for Cover 01 is $${cover01.startingBid}.`;
+      } else if (cover01.bidsCount > 0 && bidAmount <= cover01.currentBid) {
+        errs.bidAmount = `Bid must exceed the current highest bid of $${cover01.currentBid}.`;
       }
     } else if (preferredCover === '02') {
-      if (bidAmount < 25) errs.bidAmount = 'Starting bid for Cover 02 is $25.';
-      else if (cover02.bidsCount > 0 && bidAmount <= cover02.currentBid) {
-        errs.bidAmount = `Bid must exceed current highest bid of $${cover02.currentBid}.`;
+      if (cover02.status !== 'OPEN') {
+        errs.cover = 'Cover 02 is currently not open for new bids.';
+      } else if (bidAmount < cover02.startingBid) {
+        errs.bidAmount = `Starting bid for Cover 02 is $${cover02.startingBid}.`;
+      } else if (cover02.bidsCount > 0 && bidAmount <= cover02.currentBid) {
+        errs.bidAmount = `Bid must exceed the current highest bid of $${cover02.currentBid}.`;
       }
     } else {
-      const combinedMin = (cover01.bidsCount > 0 ? cover01.currentBid : 25) + 
-                          (cover02.bidsCount > 0 ? cover02.currentBid : 25);
-      if (bidAmount < 50) {
-        errs.bidAmount = 'Combined takeover starts at $50 minimum ($25 each).';
-      } else if ((cover01.bidsCount > 0 || cover02.bidsCount > 0) && bidAmount <= combinedMin) {
-        errs.bidAmount = `Combined bid must exceed total current value of $${combinedMin}.`;
+      if (cover01.status !== 'OPEN' || cover02.status !== 'OPEN') {
+        errs.cover = 'Both covers must be open to place a combined takeover bid.';
+      } else {
+        const combinedMin = (cover01.bidsCount > 0 ? cover01.currentBid : 25) + 
+                            (cover02.bidsCount > 0 ? cover02.currentBid : 25);
+        if (bidAmount < 50) {
+          errs.bidAmount = 'Combined takeover starts at $50 minimum ($25 per cover).';
+        } else if ((cover01.bidsCount > 0 || cover02.bidsCount > 0) && bidAmount <= combinedMin) {
+          errs.bidAmount = `Combined bid must exceed the total current combined value of $${combinedMin}.`;
+        }
       }
     }
 
@@ -131,22 +145,18 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent duplicate submissions
     if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     setTimeout(() => {
       const result = submitBid({
-        fullName,
-        workEmail,
-        projectName,
-        projectWebsite,
-        xHandle,
-        projectDescription,
+        fullName: fullName.trim(),
+        workEmail: workEmail.trim(),
         preferredCover,
-        preferredEvents: selectedEvents,
         bidAmount,
-        note,
+        note: note.trim() || undefined,
         logoDataUrl: logoPreview || undefined,
         agreedTerms,
       });
@@ -158,17 +168,13 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
       } else {
         setErrors(prev => ({ ...prev, submit: result.message }));
       }
-    }, 500);
+    }, 450);
   };
 
   const resetForm = () => {
     setSubmissionSuccess(null);
     setFullName('');
     setWorkEmail('');
-    setProjectName('');
-    setProjectWebsite('');
-    setXHandle('');
-    setProjectDescription('');
     setNote('');
     setLogoFileName(null);
     setLogoPreview(null);
@@ -178,19 +184,19 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
   };
 
   const formContent = (
-    <div className="bg-white border border-[#ECEBF0] rounded-[24px] p-6 sm:p-9 shadow-saas-lg relative">
+    <div className="bg-white border border-[#ECEBF0] rounded-[24px] p-6 sm:p-8 shadow-saas-lg relative">
       
       {/* Header */}
       <div className="flex items-start justify-between mb-6 pb-4 border-b border-[#ECEBF0]">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-[#A58BFA] block mb-1">
-            Sponsorship Application
+            Official Bidding Flow
           </span>
           <h3 className="text-2xl sm:text-3xl font-semibold text-[#22212A] tracking-tight">
-            Bid for phone cover placement.
+            Bid for Phone Cover
           </h3>
           <p className="text-xs sm:text-sm text-[#777681] mt-1">
-            Submit your bid below. Starting bid is $25 per cover. Payment is collected only after logo approval.
+            Starting bid is $25 per cover ($50 combined). Quick submission. Payment is collected only after winning bid confirmation.
           </p>
         </div>
 
@@ -205,32 +211,37 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
       </div>
 
       {submissionSuccess ? (
-        <div className="text-center py-10 space-y-4">
+        <div className="text-center py-8 space-y-4">
           <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-saas-sm">
             <CheckCircle2 className="w-7 h-7" />
           </div>
 
-          <h4 className="text-2xl font-semibold text-[#22212A] tracking-tight">
-            Bid Registered Successfully
+          <h4 className="text-2xl font-bold text-[#22212A] tracking-tight">
+            Bid Recorded Successfully
           </h4>
 
           <div className="bg-[#F8F7FA] border border-[#ECEBF0] p-5 rounded-2xl max-w-md mx-auto text-left text-xs space-y-2">
-            <div><strong className="text-[#22212A]">Reference ID:</strong> <span className="text-[#A58BFA] font-medium">{submissionSuccess.refId}</span></div>
-            <div><strong className="text-[#22212A]">Project:</strong> {projectName}</div>
-            <div><strong className="text-[#22212A]">Cover Slot:</strong> {preferredCover === 'both' ? 'Both Covers (Takeover)' : `Cover ${preferredCover}`}</div>
-            <div><strong className="text-[#22212A]">Bid Amount:</strong> ${bidAmount} USD</div>
-            <div><strong className="text-[#22212A]">Status:</strong> Recorded & Under Review</div>
+            <div><strong className="text-[#22212A]">Reference ID:</strong> <span className="text-[#A58BFA] font-bold">{submissionSuccess.refId}</span></div>
+            <div><strong className="text-[#22212A]">Bidder Name:</strong> {fullName}</div>
+            <div><strong className="text-[#22212A]">Selected Cover:</strong> {preferredCover === 'both' ? 'Both Covers (Combined Takeover)' : `Cover ${preferredCover}`}</div>
+            <div>
+              <strong className="text-[#22212A]">Bid Amount:</strong> ${bidAmount} USD
+              {preferredCover === 'both' && (
+                <span className="text-[#777681] block mt-0.5">Itemized: ${Math.round(bidAmount / 2)} allocated to Cover 01, ${Math.round(bidAmount / 2)} allocated to Cover 02</span>
+              )}
+            </div>
+            <div><strong className="text-[#22212A]">Status:</strong> Recorded & Verified in Auction</div>
           </div>
 
           <p className="text-xs text-[#777681] max-w-md mx-auto">
-            A confirmation record has been saved. We will review your project and logo files. You can return anytime to bid higher while the auction remains open.
+            Your bid is active on the live board. We will contact <span className="font-semibold text-[#22212A]">{workEmail}</span> with updates and artwork requirements if you hold the winning bid at close.
           </p>
 
           <button
             onClick={resetForm}
-            className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-[#24232E] text-white text-xs font-medium hover:bg-[#353342] transition-colors shadow-saas-sm"
+            className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-[#24232E] text-white text-xs font-semibold hover:bg-[#353342] transition-colors shadow-saas-sm"
           >
-            Done / Place Another Bid
+            Done
           </button>
         </div>
       ) : (
@@ -242,10 +253,17 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
             </div>
           )}
 
-          {/* Cover Selection Selector */}
+          {errors.cover && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errors.cover}</span>
+            </div>
+          )}
+
+          {/* 1. Selected Cover Selector */}
           <div>
             <label className="block text-xs font-semibold text-[#22212A] mb-2">
-              1. Choose Cover Slot
+              1. Selected Cover
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
@@ -253,13 +271,13 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                 onClick={() => setPreferredCover('01')}
                 className={`p-3.5 rounded-xl border text-left transition-all ${
                   preferredCover === '01'
-                    ? 'bg-[#F0EAF8] border-[#A58BFA] text-[#22212A] shadow-saas-sm'
+                    ? 'bg-[#F0EAF8] border-[#A58BFA] text-[#22212A] shadow-saas-sm ring-1 ring-[#A58BFA]'
                     : 'bg-white border-[#ECEBF0] text-[#777681] hover:border-[#DDDCE3]'
                 }`}
               >
-                <div className="text-[11px] font-semibold text-[#22212A]">Cover 01 (Upper)</div>
-                <div className="text-xs text-[#777681] mt-0.5">
-                  High: ${cover01.currentBid} · {cover01.bidsCount} bids
+                <div className="text-xs font-bold text-[#22212A]">Cover 01 (Upper)</div>
+                <div className="text-[11px] text-[#777681] mt-0.5">
+                  Starting: ${cover01.startingBid} · High: ${cover01.currentBid}
                 </div>
               </button>
 
@@ -268,13 +286,13 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                 onClick={() => setPreferredCover('02')}
                 className={`p-3.5 rounded-xl border text-left transition-all ${
                   preferredCover === '02'
-                    ? 'bg-[#FBF0EA] border-[#D89B30] text-[#22212A] shadow-saas-sm'
+                    ? 'bg-[#FBF0EA] border-[#D89B30] text-[#22212A] shadow-saas-sm ring-1 ring-[#D89B30]'
                     : 'bg-white border-[#ECEBF0] text-[#777681] hover:border-[#DDDCE3]'
                 }`}
               >
-                <div className="text-[11px] font-semibold text-[#22212A]">Cover 02 (Lower)</div>
-                <div className="text-xs text-[#777681] mt-0.5">
-                  High: ${cover02.currentBid} · {cover02.bidsCount} bids
+                <div className="text-xs font-bold text-[#22212A]">Cover 02 (Lower)</div>
+                <div className="text-[11px] text-[#777681] mt-0.5">
+                  Starting: ${cover02.startingBid} · High: ${cover02.currentBid}
                 </div>
               </button>
 
@@ -287,22 +305,22 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                     : 'bg-white border-[#ECEBF0] text-[#777681] hover:border-[#DDDCE3]'
                 }`}
               >
-                <div className="text-[11px] font-semibold">Both Covers (Takeover)</div>
-                <div className="text-xs opacity-80 mt-0.5">
-                  From $50 combined · Full back
+                <div className="text-xs font-bold">Both Covers (Combined)</div>
+                <div className="text-[11px] opacity-80 mt-0.5">
+                  Starting: $50 ($25 each)
                 </div>
               </button>
             </div>
           </div>
 
-          {/* Bid Amount Field */}
+          {/* 2. Bid Amount Field with itemized breakdown */}
           <div className="bg-[#F8F7FA] border border-[#ECEBF0] rounded-2xl p-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
               <label className="text-xs font-semibold text-[#22212A]">
                 2. Your Bid Amount ($ USD)
               </label>
-              <span className="text-xs text-[#777681]">
-                {preferredCover === 'both' ? 'Min combined: $50' : `Starting bid: $25 (Min valid: >$${preferredCover === '01' ? cover01.currentBid : cover02.currentBid})`}
+              <span className="text-[11px] text-[#777681]">
+                {getMinBidText()}
               </span>
             </div>
 
@@ -327,55 +345,37 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                     key={inc}
                     type="button"
                     onClick={() => setBidAmount(prev => prev + inc)}
-                    className="px-3 py-2 rounded-xl bg-white border border-[#ECEBF0] text-xs font-medium text-[#22212A] hover:bg-[#F2F1F6] transition-colors"
+                    className="px-3 py-2 rounded-xl bg-white border border-[#ECEBF0] text-xs font-semibold text-[#22212A] hover:bg-[#F2F1F6] transition-colors"
                   >
                     +${inc}
                   </button>
                 ))}
               </div>
             </div>
+
+            {preferredCover === 'both' && (
+              <div className="mt-2 pt-2 border-t border-[#ECEBF0]/60 text-[11px] text-[#777681] flex items-center justify-between">
+                <span>Itemized breakdown:</span>
+                <span className="font-semibold text-[#22212A]">
+                  Cover 01: ${Math.round(bidAmount / 2)} · Cover 02: ${Math.round(bidAmount / 2)}
+                </span>
+              </div>
+            )}
+
             {errors.bidAmount && (
               <p className="mt-1.5 text-xs text-red-600">{errors.bidAmount}</p>
             )}
           </div>
 
-          {/* Project Details Fields */}
+          {/* 3. Bidder Identity (Simplified: Full Name & Email only) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-[#22212A] mb-1">
-                Project Name *
+                Full Name / Bidder Display Name *
               </label>
               <input
                 type="text"
-                placeholder="e.g. Orbit Wallet"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#ECEBF0] text-xs bg-white focus:outline-none focus:border-[#A58BFA]"
-              />
-              {errors.projectName && <p className="text-[11px] text-red-600 mt-0.5">{errors.projectName}</p>}
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-[#22212A] mb-1">
-                Project Website *
-              </label>
-              <input
-                type="url"
-                placeholder="https://yourproject.io"
-                value={projectWebsite}
-                onChange={(e) => setProjectWebsite(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#ECEBF0] text-xs bg-white focus:outline-none focus:border-[#A58BFA]"
-              />
-              {errors.projectWebsite && <p className="text-[11px] text-red-600 mt-0.5">{errors.projectWebsite}</p>}
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-[#22212A] mb-1">
-                Contact Name *
-              </label>
-              <input
-                type="text"
-                placeholder="Your full name"
+                placeholder="e.g. Alex Rivera"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#ECEBF0] text-xs bg-white focus:outline-none focus:border-[#A58BFA]"
@@ -385,101 +385,47 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
 
             <div>
               <label className="block text-xs font-medium text-[#22212A] mb-1">
-                Work Email (Private) *
+                Email Address (Confidential) *
               </label>
               <input
                 type="email"
-                placeholder="name@company.xyz"
+                placeholder="alex@example.com"
                 value={workEmail}
                 onChange={(e) => setWorkEmail(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#ECEBF0] text-xs bg-white focus:outline-none focus:border-[#A58BFA]"
               />
               {errors.workEmail && <p className="text-[11px] text-red-600 mt-0.5">{errors.workEmail}</p>}
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-medium text-[#22212A] mb-1">
-                X / Twitter Handle *
-              </label>
+          {/* Optional Logo File Upload for Back Cover Preview */}
+          <div>
+            <label className="block text-xs font-medium text-[#22212A] mb-1">
+              Optional Sponsor Logo (for preview & print preparation)
+            </label>
+            <label className="w-full px-3.5 py-2.5 rounded-xl border border-dashed border-[#ECEBF0] bg-white cursor-pointer hover:bg-[#F8F7FA] transition-colors flex items-center justify-between">
+              <span className="text-xs truncate text-[#777681]">
+                {logoFileName || 'Upload transparent PNG or SVG...'}
+              </span>
+              <Upload className="w-3.5 h-3.5 text-[#777681] shrink-0" />
               <input
-                type="text"
-                placeholder="@yourhandle"
-                value={xHandle}
-                onChange={(e) => setXHandle(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#ECEBF0] text-xs bg-white focus:outline-none focus:border-[#A58BFA]"
+                type="file"
+                accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                onChange={handleLogoUpload}
+                className="hidden"
               />
-              {errors.xHandle && <p className="text-[11px] text-red-600 mt-0.5">{errors.xHandle}</p>}
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-[#22212A] mb-1">
-                Logo Upload (SVG or PNG)
-              </label>
-              <label className="w-full px-3.5 py-2.5 rounded-xl border border-dashed border-[#ECEBF0] bg-white cursor-pointer hover:bg-[#F8F7FA] transition-colors flex items-center justify-between">
-                <span className="text-xs truncate text-[#777681]">
-                  {logoFileName || 'Upload vector/PNG file...'}
-                </span>
-                <Upload className="w-3.5 h-3.5 text-[#777681] shrink-0" />
-                <input
-                  type="file"
-                  accept="image/png,image/jpeg,image/svg+xml,image/webp"
-                  onChange={handleLogoUpload}
-                  className="hidden"
-                />
-              </label>
-              {errors.logo && <p className="text-[11px] text-red-600 mt-0.5">{errors.logo}</p>}
-            </div>
+            </label>
+            {errors.logo && <p className="text-[11px] text-red-600 mt-0.5">{errors.logo}</p>}
           </div>
 
+          {/* Optional Note */}
           <div>
             <label className="block text-xs font-medium text-[#22212A] mb-1">
-              One-Line Project Description *
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Modular account abstraction wallet for DeFi builders"
-              value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#ECEBF0] text-xs bg-white focus:outline-none focus:border-[#A58BFA]"
-            />
-            {errors.projectDescription && <p className="text-[11px] text-red-600 mt-0.5">{errors.projectDescription}</p>}
-          </div>
-
-          {/* Event Presence Selection */}
-          <div>
-            <label className="block text-xs font-medium text-[#22212A] mb-1.5">
-              Target Conference Events
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { id: 'DEVCON', label: 'Devcon Southeast Asia' },
-                { id: 'IBW_MUMBAI', label: 'India Blockchain Week (IBW)' },
-                { id: 'ETH_GLOBAL', label: 'ETHGlobal Hackathons' },
-              ].map(evt => (
-                <button
-                  key={evt.id}
-                  type="button"
-                  onClick={() => handleEventToggle(evt.id)}
-                  className={`px-3 py-1.5 rounded-full text-xs transition-all ${
-                    selectedEvents.includes(evt.id)
-                      ? 'bg-[#24232E] text-white font-medium shadow-saas-sm'
-                      : 'bg-[#F8F7FA] text-[#777681] border border-[#ECEBF0] hover:text-[#22212A]'
-                  }`}
-                >
-                  {selectedEvents.includes(evt.id) ? '✓ ' : '+ '}
-                  {evt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-[#22212A] mb-1">
-              Optional Note
+              Optional Note or Instructions
             </label>
             <textarea
               rows={2}
-              placeholder="Specific color requirements, QR code, or details..."
+              placeholder="Any specific requests, preferences, or questions..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
               className="w-full px-3.5 py-2 rounded-xl border border-[#ECEBF0] text-xs bg-white focus:outline-none focus:border-[#A58BFA]"
@@ -496,7 +442,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
                 className="mt-0.5 w-4 h-4 rounded border-[#ECEBF0] text-[#24232E] focus:ring-0"
               />
               <span className="text-xs text-[#777681] leading-relaxed">
-                I understand this is an independent creator sponsorship campaign. Submitting this bid does not immediately charge payment. Upon winning bid confirmation, payment is settled via crypto (USDC / ETH) or fiat.
+                I agree to the bidding and sponsorship terms. Each cover starting price is $25 ($50 combined). Submitting this bid does not immediately charge payment. Upon winning bid confirmation, payment is settled via crypto (USDC / ETH) or fiat.
               </span>
             </label>
             {errors.agreedTerms && <p className="text-[11px] text-red-600 mt-1">{errors.agreedTerms}</p>}
@@ -517,7 +463,7 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 sm:flex-none h-11 px-7 rounded-full bg-[#24232E] text-white text-xs font-semibold hover:bg-[#353342] active:scale-[0.98] transition-all shadow-saas-sm flex items-center justify-center gap-2 disabled:opacity-60"
+              className="flex-1 sm:flex-none h-11 px-7 rounded-full bg-[#24232E] text-white text-xs font-semibold hover:bg-[#353342] active:scale-[0.98] transition-all shadow-saas-sm flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#A58BFA]" />
               <span>{isSubmitting ? 'Recording Bid...' : `Submit Bid ($${bidAmount} USD)`}</span>

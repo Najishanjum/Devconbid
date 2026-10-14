@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useAuction } from '../context/AuctionContext';
-import { Menu, X, ArrowUpRight, ShieldCheck } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export const SiteNavigation: React.FC = () => {
-  const { setIsBidModalOpen, setSelectedCoverForBid, setIsAdminOpen, setIsPerksOpen } = useAuction();
+  const { setIsBidModalOpen, setSelectedCoverForBid, setIsPerksOpen } = useAuction();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
     { name: 'How It Works', href: '#how-it-works' },
+    { name: 'Why Sponsor', href: '#why-sponsor' },
     { name: 'Auction', href: '#auction' },
+    { name: '3D Configurator', href: '#configurator' },
     { name: 'Sponsor Perks', href: '#perks', isPerksTrigger: true },
-    { name: 'Events', href: '#events' },
-    { name: 'About', href: '#about' },
+    { name: 'Where It Goes', href: '#events' },
     { name: 'FAQs', href: '#faq' },
   ];
 
@@ -38,24 +39,24 @@ export const SiteNavigation: React.FC = () => {
     <header className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-md border-b border-[#ECEBF0] transition-all">
       <div className="max-w-[1140px] mx-auto px-6 h-16 flex items-center justify-between">
         
-        {/* Brand Logo - Minimal geometric mark inspired by reference */}
+        {/* Brand Logo - Minimal geometric mark */}
         <div className="flex items-center gap-3">
           <a 
             href="#hero" 
             className="group flex items-center gap-2.5 transition-opacity hover:opacity-85"
-            title="Backsy Home"
+            title="PocketBillboard Home"
           >
             <div className="w-8 h-8 rounded-full bg-[#24232E] flex items-center justify-center text-white shadow-sm">
               <div className="w-2.5 h-2.5 rounded-sm bg-[#A58BFA] rotate-45" />
             </div>
             <span className="text-[15px] font-bold tracking-tight text-[#22212A]">
-              Backsy
+              PocketBillboard
             </span>
           </a>
         </div>
 
         {/* Center Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-7 text-[13px] font-medium text-[#777681]">
+        <nav className="hidden md:flex items-center gap-6 text-[13px] font-medium text-[#777681]">
           {navLinks.map((link) => (
             <a
               key={link.name}
@@ -71,21 +72,13 @@ export const SiteNavigation: React.FC = () => {
           ))}
         </nav>
 
-        {/* Right Actions: Admin link & Dark Pill Button */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsAdminOpen(true)}
-            className="hidden sm:inline-flex items-center gap-1.5 text-[13px] font-medium text-[#777681] hover:text-[#22212A] transition-colors"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#A2A0AA]" />
-            <span>Admin</span>
-          </button>
-
+        {/* Right Actions: Dark Pill Button */}
+        <div className="flex items-center gap-3">
           <button
             onClick={handleGetSpot}
             className="inline-flex items-center justify-center h-10 px-5 rounded-full bg-[#24232E] text-white text-[13px] font-medium hover:bg-[#353342] active:scale-[0.98] transition-all shadow-saas-sm"
           >
-            Get a Spot
+            Bid for a Cover
           </button>
 
           {/* Mobile Menu Toggle */}
@@ -101,8 +94,8 @@ export const SiteNavigation: React.FC = () => {
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-[#ECEBF0] px-6 py-4 space-y-3 shadow-lg">
-          <div className="flex flex-col gap-2 text-sm font-medium text-[#777681]">
+        <div className="md:hidden bg-white border-b border-[#ECEBF0] px-6 py-4 space-y-2 shadow-lg">
+          <div className="flex flex-col gap-1.5 text-sm font-medium text-[#777681]">
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -116,18 +109,6 @@ export const SiteNavigation: React.FC = () => {
                 {link.name}
               </a>
             ))}
-            
-            <div className="pt-2 border-t border-[#ECEBF0] flex items-center justify-between px-3">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setIsAdminOpen(true);
-                }}
-                className="text-xs text-[#777681] hover:text-[#22212A] font-medium"
-              >
-                Admin Dashboard
-              </button>
-            </div>
           </div>
         </div>
       )}

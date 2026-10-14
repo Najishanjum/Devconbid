@@ -1,21 +1,16 @@
 import React from 'react';
 import { useAuction } from '../context/AuctionContext';
-import { ExternalLink, Sparkles, ArrowRight } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 export const SponsorShowcaseSection: React.FC = () => {
-  const { confirmedSponsors, setSelectedCoverForBid, setIsBidModalOpen } = useAuction();
-
-  const handleClaim = () => {
-    setSelectedCoverForBid('01');
-    setIsBidModalOpen(true);
-  };
+  const { confirmedSponsors } = useAuction();
 
   return (
     <section id="sponsors" className="py-20 px-6 sm:px-8 border-b border-[#ECEBF0]">
       <div className="max-w-[1040px] mx-auto">
         
         {/* Section Header */}
-        <div className="text-center max-w-xl mx-auto mb-14">
+        <div className="text-center max-w-xl mx-auto mb-12">
           <span className="text-xs font-semibold uppercase tracking-wider text-[#A58BFA] block mb-2">
             The Showcase
           </span>
@@ -27,28 +22,12 @@ export const SponsorShowcaseSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Empty State vs Confirmed Sponsors */}
+        {/* Clean, quiet empty area vs actual confirmed sponsors */}
         {confirmedSponsors.length === 0 ? (
-          <div className="bg-[#F8F7FA] border border-[#ECEBF0] rounded-[24px] p-10 sm:p-14 text-center max-w-xl mx-auto shadow-saas-sm">
-            <div className="w-12 h-12 rounded-full bg-white border border-[#ECEBF0] flex items-center justify-center mx-auto mb-4 text-[#A58BFA] shadow-saas-sm">
-              <Sparkles className="w-5 h-5" />
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-semibold text-[#22212A] tracking-tight mb-2">
-              Your project could be the first one here.
-            </h3>
-
-            <p className="text-xs sm:text-sm text-[#777681] max-w-md mx-auto mb-6 leading-relaxed">
-              Both Cover 01 and Cover 02 are currently open for bidding starting at $25 each ($50 combined takeover).
+          <div className="text-center py-12">
+            <p className="text-xs sm:text-sm text-[#A2A0AA] font-normal tracking-wide">
+              No sponsors confirmed yet · Bidding is currently open
             </p>
-
-            <button
-              onClick={handleClaim}
-              className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-[#24232E] text-white text-xs font-medium hover:bg-[#353342] active:scale-[0.98] transition-all shadow-saas-sm gap-2"
-            >
-              <span>Bid for a Cover</span>
-              <ArrowRight className="w-4 h-4 text-white/80" />
-            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -81,16 +60,18 @@ export const SponsorShowcaseSection: React.FC = () => {
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-[#ECEBF0] flex items-center justify-between text-xs text-[#777681]">
-                  <span>Tour: {sponsor.events}</span>
-                  <a
-                    href={sponsor.website}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-[#22212A] hover:text-[#A58BFA] flex items-center gap-1 transition-colors"
-                  >
-                    <span>Website</span>
-                    <ExternalLink className="w-3 h-3 text-[#A2A0AA]" />
-                  </a>
+                  <span>Agreed Coverage: {sponsor.events}</span>
+                  {sponsor.website && (
+                    <a
+                      href={sponsor.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-[#22212A] hover:text-[#A58BFA] flex items-center gap-1 transition-colors"
+                    >
+                      <span>Website</span>
+                      <ExternalLink className="w-3 h-3 text-[#A2A0AA]" />
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
