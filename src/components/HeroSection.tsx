@@ -47,38 +47,39 @@ export const HeroSection: React.FC = () => {
   return (
     <section id="hero" className="relative pt-10 pb-16 px-6 sm:px-8 text-center flex flex-col items-center">
       
-      {/* 2nd Image Style: Live Count Section "● 110 watched till now ↗" */}
-      <div className="mb-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-[#ECEBF0] shadow-saas-sm hover:border-[#D1D5DB] transition-all cursor-pointer group">
-        <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] dot-live-pulse inline-block shrink-0" />
-        <span className="text-sm font-extrabold text-[#111111] tracking-tight">
-          {watchCount.toLocaleString()}
-        </span>
-        <span className="text-sm text-[#4B5563] font-normal">
-          watched till now
-        </span>
-        <ArrowUpRight className="w-3.5 h-3.5 text-[#6B7280] group-hover:text-[#111111] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-      </div>
-
-      {/* Main SaaS Headline — Styled exactly matching the 1st reference image font & format */}
-      <div className="max-w-4xl mx-auto space-y-4">
-        <h1 className="text-4xl sm:text-6xl md:text-[72px] font-extrabold text-[#111111] tracking-[-0.04em] leading-[1.08] font-sans">
-          Walking billboard for your brand
-        </h1>
-
-        {/* Subtitle with grey inline highlight badges as in Image 1 */}
-        <div className="text-base sm:text-xl text-[#374151] max-w-2xl mx-auto leading-relaxed pt-1">
-          <span className="inline-block bg-[#EAEAEA] text-[#18181B] px-2.5 py-0.5 rounded-[6px] font-semibold text-sm sm:text-base border border-[#E0E0E0] shadow-xs align-baseline">
-            your logo
-          </span>{' '}
-          on my phone,{' '}
-          <span className="inline-block bg-[#EAEAEA] text-[#18181B] px-2.5 py-0.5 rounded-[6px] font-semibold text-sm sm:text-base border border-[#E0E0E0] shadow-xs align-baseline">
-            attends the event
-          </span>{' '}
-          with me at{' '}
-          <span className="inline-block bg-[#EAEAEA] text-[#18181B] px-2.5 py-0.5 rounded-[6px] font-semibold text-sm sm:text-base border border-[#E0E0E0] shadow-xs align-baseline">
-            Devcon, IBW, and ETHGlobal
+      {/* Google Antigravity Eyebrow Pill + Live Visitor Counter */}
+      <div className="mb-6 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+        {/* Antigravity Eyebrow Pill */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#E4E4E7] shadow-[0_2px_10px_rgba(0,0,0,0.03)] backdrop-blur-md">
+          <span className="w-2 h-2 rounded-full bg-gradient-to-tr from-[#7C3AED] to-[#2563EB] animate-pulse" />
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.14em] text-[#18181B]">
+            YOUR PHONE. YOUR BILLBOARD.
           </span>
         </div>
+
+        {/* Live Audience Activity Counter */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#E4E4E7] shadow-[0_2px_10px_rgba(0,0,0,0.03)] backdrop-blur-md text-xs font-medium text-[#52525B]">
+          <span className="w-2 h-2 rounded-full bg-[#2563EB] dot-live-pulse inline-block shrink-0" />
+          <span className="font-extrabold text-[#111118] tracking-tight">
+            {watchCount.toLocaleString()}
+          </span>
+          <span>watched till now</span>
+          <ArrowUpRight className="w-3.5 h-3.5 text-[#71717A]" />
+        </div>
+      </div>
+
+      {/* Oversized Antigravity Typography Headline & Supporting Text */}
+      <div className="max-w-4xl mx-auto space-y-4 text-center">
+        <h1 className="text-[clamp(2.5rem,6.8vw,5.25rem)] font-extrabold text-[#111118] tracking-[-0.04em] leading-[1.04] font-sans selection:bg-[#F0EAF8]">
+          Turn your phone into a<br className="hidden sm:inline" /> moving billboard.
+        </h1>
+
+        <p className="text-base sm:text-xl text-[#52525B] max-w-2xl mx-auto leading-relaxed font-normal pt-1">
+          Discover opportunities, showcase brands, and turn everyday movement into advertising visibility. Two physical modular covers carried across{' '}
+          <span className="inline-block bg-[#F4F4F5] text-[#18181B] px-2.5 py-0.5 rounded-[6px] font-semibold text-sm sm:text-base border border-[#E4E4E7] shadow-2xs align-baseline">
+            Devcon, IBW, and ETHGlobal
+          </span>.
+        </p>
       </div>
 
       {/* Primary & Secondary CTA Buttons */}
@@ -88,22 +89,22 @@ export const HeroSection: React.FC = () => {
             setSelectedCoverForBid('01');
             setIsBidModalOpen(true);
           }}
-          className="inline-flex items-center justify-center h-12 px-7 rounded-full bg-[#24232E] text-white text-sm font-medium hover:bg-[#353342] active:scale-[0.98] transition-all shadow-saas-sm gap-2"
+          className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-[#18181B] text-white text-sm font-semibold hover:bg-[#27272A] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-[0_8px_20px_rgba(0,0,0,0.12)] gap-2 group"
         >
-          <span>Bid for a Cover</span>
-          <ArrowRight className="w-4 h-4 text-white/80" />
+          <span>Get Started — Bid for a Cover</span>
+          <ArrowRight className="w-4 h-4 text-white/80 group-hover:translate-x-0.5 transition-transform" />
         </button>
 
         <button
           onClick={() => scrollToSection('#how-it-works')}
-          className="inline-flex items-center justify-center h-12 px-6 rounded-full bg-white text-[#22212A] border border-[#ECEBF0] text-sm font-medium hover:bg-[#F8F7FA] hover:border-[#DDDCE3] active:scale-[0.98] transition-all shadow-saas-sm"
+          className="inline-flex items-center justify-center h-12 px-7 rounded-full bg-white text-[#18181B] border border-[#E4E4E7] text-sm font-medium hover:bg-[#F4F4F5] hover:border-[#D4D4D8] active:scale-[0.98] transition-all duration-200 shadow-sm"
         >
-          Explore Sponsorship
+          Explore How It Works
         </button>
       </div>
 
       {/* Reassurance Micro-Copy */}
-      <div className="mt-3 text-xs text-[#A2A0AA] font-normal">
+      <div className="mt-3.5 text-xs text-[#71717A] font-normal">
         Only 2 spots available · Starting at $25 per cover
       </div>
 

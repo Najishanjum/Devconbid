@@ -1,5 +1,6 @@
 import React from 'react';
 import { AuctionProvider, useAuction } from './context/AuctionContext';
+import { ParticleBackground } from './components/ParticleBackground';
 import { SiteNavigation } from './components/SiteNavigation';
 import { HeroSection } from './components/HeroSection';
 import { TrustStrip } from './components/TrustStrip';
@@ -20,11 +21,14 @@ const MainLayout: React.FC = () => {
   const { isBidModalOpen, setIsBidModalOpen } = useAuction();
 
   return (
-    /* Outer Desktop Canvas Shell on Deep Charcoal Backdrop (#1F1E29) */
-    <div className="min-h-screen bg-[#1F1E29] py-3 sm:py-8 md:py-10 px-2 sm:px-6 md:px-8 flex justify-center selection:bg-[#F0EAF8] selection:text-[#24232E]">
+    /* Outer Desktop Canvas Shell with clean Antigravity light background */
+    <div className="min-h-screen bg-[#FCFCFD] py-2 sm:py-6 md:py-8 px-2 sm:px-6 md:px-8 flex justify-center selection:bg-[#F0EAF8] selection:text-[#18181B] relative overflow-x-hidden">
       
-      {/* Central Large White Website Canvas with Rounded Corners */}
-      <div className="w-full max-w-[1160px] bg-white rounded-[14px] sm:rounded-[20px] shadow-2xl flex flex-col relative overflow-hidden border border-[#2D2B3B]/40">
+      {/* Full-viewport Interactive Particle Background (Google Antigravity Inspired) */}
+      <ParticleBackground />
+
+      {/* Central Large White Website Canvas with semi-translucent backdrop */}
+      <div className="w-full max-w-[1160px] bg-white/85 backdrop-blur-[3px] rounded-[16px] sm:rounded-[24px] shadow-[0_20px_70px_rgba(0,0,0,0.05)] flex flex-col relative z-10 border border-[#E4E4E7]/80">
         
         {/* Navigation Bar */}
         <SiteNavigation />
