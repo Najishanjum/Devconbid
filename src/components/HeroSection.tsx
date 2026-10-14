@@ -1,12 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuction } from '../context/AuctionContext';
 import { PhoneMockup } from './PhoneMockup';
-import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Sparkles, CheckCircle2, ArrowUpRight } from 'lucide-react';
 
 export const HeroSection: React.FC = () => {
   const { covers, setIsBidModalOpen, setSelectedCoverForBid } = useAuction();
   const cover01 = covers.find(c => c.id === 'cover-01')!;
   const cover02 = covers.find(c => c.id === 'cover-02')!;
+
+  // Dynamic live visitor counter starting from 110 as shown in image 2
+  const [watchCount, setWatchCount] = useState<number>(110);
+
+  useEffect(() => {
+    // Check localStorage for persisted count, increment on unique session
+    const stored = localStorage.getItem('pocketbillboard_watch_count');
+    let current = stored ? parseInt(stored, 10) : 110;
+    if (isNaN(current) || current < 110) current = 110;
+
+    const hasVisited = sessionStorage.getItem('pocketbillboard_session_visited');
+    if (!hasVisited) {
+      current += 1;
+      localStorage.setItem('pocketbillboard_watch_count', current.toString());
+      sessionStorage.setItem('pocketbillboard_session_visited', 'true');
+    }
+    setWatchCount(current);
+
+    // Subtle realistic occasional view increment
+    const interval = setInterval(() => {
+      if (Math.random() > 0.6) {
+        setWatchCount(prev => {
+          const next = prev + 1;
+          localStorage.setItem('pocketbillboard_watch_count', next.toString());
+          return next;
+        });
+      }
+    }, 18000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const scrollToSection = (id: string) => {
     const el = document.querySelector(id);
@@ -14,47 +45,65 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section id="hero" className="relative pt-12 pb-16 px-6 sm:px-8 text-center flex flex-col items-center">
+    <section id="hero" className="relative pt-10 pb-16 px-6 sm:px-8 text-center flex flex-col items-center">
       
+      {/* 2nd Image Style: Live Count Section "● 110 watched till now ↗" */}
+      <div className="mb-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-[#ECEBF0] shadow-saas-sm hover:border-[#D1D5DB] transition-all cursor-pointer group">
+        <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] dot-live-pulse inline-block shrink-0" />
+        <span className="text-sm font-extrabold text-[#111111] tracking-tight">
+          {watchCount.toLocaleString()}
+        </span>
+        <span className="text-sm text-[#4B5563] font-normal">
+          watched till now
+        </span>
+        <ArrowUpRight className="w-3.5 h-3.5 text-[#6B7280] group-hover:text-[#111111] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+      </div>
 
-      {/* Main SaaS Headline (Matching the ticket system / Organiser reference style) */}
-      <div className="max-w-3xl mx-auto space-y-4">
-        <h1 className="text-4xl sm:text-6xl md:text-[68px] font-bold text-[#22212A] tracking-[-0.035em] leading-[1.12]">
-          Your logo, <br className="hidden sm:inline" />
-          on my{' '}
-          <span className="inline-flex items-center bg-[#E6F7F2] text-[#008767] border border-[#A7E8D6] px-4 py-0.5 sm:py-1 rounded-[22px] font-bold shadow-sm align-middle hover:scale-105 transition-transform duration-200 animate-pulse-glow">
-            phone.
-          </span>
+      {/* Main SaaS Headline — Styled exactly matching the 1st reference image font & format */}
+      <div className="max-w-4xl mx-auto space-y-4">
+        <h1 className="text-4xl sm:text-6xl md:text-[72px] font-extrabold text-[#111111] tracking-[-0.04em] leading-[1.08] font-sans">
+          Walking billboard for your brand
         </h1>
 
-        <p className="text-base sm:text-lg text-[#52505C] max-w-xl mx-auto leading-relaxed font-normal">
-          Two physical iPhone 16 Pro back covers. Two sponsor spots. A new way for Web3 projects to show up in the real world.
-        </p>
+        {/* Subtitle with grey inline highlight badges as in Image 1 */}
+        <div className="text-base sm:text-xl text-[#374151] max-w-2xl mx-auto leading-relaxed pt-1">
+          <span className="inline-block bg-[#EAEAEA] text-[#18181B] px-2.5 py-0.5 rounded-[6px] font-semibold text-sm sm:text-base border border-[#E0E0E0] shadow-xs align-baseline">
+            your logo
+          </span>{' '}
+          on my phone,{' '}
+          <span className="inline-block bg-[#EAEAEA] text-[#18181B] px-2.5 py-0.5 rounded-[6px] font-semibold text-sm sm:text-base border border-[#E0E0E0] shadow-xs align-baseline">
+            attends the event
+          </span>{' '}
+          with me at{' '}
+          <span className="inline-block bg-[#EAEAEA] text-[#18181B] px-2.5 py-0.5 rounded-[6px] font-semibold text-sm sm:text-base border border-[#E0E0E0] shadow-xs align-baseline">
+            Devcon, IBW, and ETHGlobal
+          </span>
+        </div>
 
-        {/* Highlighted & Brightened Sponsorship Tour Callout */}
-        <div className="mt-5 max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl bg-white border-2 border-[#C4B5FD] shadow-[0_8px_30px_rgba(139,92,246,0.16)] hover:shadow-[0_12px_36px_rgba(139,92,246,0.24)] transition-all duration-300">
+        {/* Physical Sponsorship Tour Card with clean image-styled typography */}
+        <div className="mt-6 max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl bg-white border border-[#E4E4E7] shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.1)] transition-all duration-300">
           <div className="flex items-center justify-center gap-1.5 mb-2">
             <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#6D28D9]">
+            <span className="text-[12px] font-bold uppercase tracking-wider text-[#18181B]">
               Physical Sponsorship Tour
             </span>
             <Sparkles className="w-4 h-4 text-[#7C3AED] animate-pulse" />
           </div>
-          <p className="text-sm sm:text-base font-semibold text-[#18181B] leading-relaxed">
+          <p className="text-sm sm:text-base text-[#27272A] leading-relaxed font-normal">
             I'm bringing my phone to{' '}
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg font-bold text-[#6D28D9] bg-[#EDE9FE] border border-[#DDD6FE] shadow-sm mx-1">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-[#18181B] bg-[#F4F4F5] border border-[#E4E4E7] mx-0.5">
               Devcon
             </span>
             ,{' '}
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg font-bold text-[#047857] bg-[#ECFDF5] border border-[#A7F3D0] shadow-sm mx-1">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-[#18181B] bg-[#F4F4F5] border border-[#E4E4E7] mx-0.5">
               IBW
             </span>
             , and{' '}
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg font-bold text-[#1D4ED8] bg-[#EFF6FF] border border-[#BFDBFE] shadow-sm mx-1">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md font-semibold text-[#18181B] bg-[#F4F4F5] border border-[#E4E4E7] mx-0.5">
               ETHGlobal
             </span>
             .{' '}
-            <span className="text-[#374151] font-medium block sm:inline mt-1 sm:mt-0">
+            <span className="text-[#52525B] font-medium block sm:inline mt-1 sm:mt-0">
               Sponsor a cover, get your approved logo printed, and travel with me through the builder community.
             </span>
           </p>

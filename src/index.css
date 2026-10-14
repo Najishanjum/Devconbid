@@ -117,9 +117,131 @@ html {
   animation: pulseGlow 3s ease-in-out infinite;
 }
 
-.text-shimmer {
+@keyframes fontGradientShine {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes cardColorBeam {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cardSurfaceShine {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateX(250%) skewX(-20deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+@keyframes livePulseBlue {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(37, 99, 235, 0);
+    transform: scale(1.1);
+  }
+}
+
+.animate-font-shimmer {
+  background: linear-gradient(90deg, #18181b 0%, #6d28d9 25%, #059669 50%, #2563eb 75%, #18181b 100%);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fontGradientShine 6s linear infinite;
+}
+
+.animate-title-shimmer {
+  background: linear-gradient(135deg, #22212A 20%, #7C3AED 50%, #059669 80%, #22212A 100%);
   background-size: 200% auto;
-  animation: textShimmer 4s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fontGradientShine 5s ease infinite;
+}
+
+.card-shine-wrapper {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-shine-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(165, 139, 250, 0.25) 60deg,
+    rgba(52, 211, 153, 0.25) 120deg,
+    rgba(96, 165, 250, 0.25) 180deg,
+    rgba(251, 146, 60, 0.25) 240deg,
+    transparent 300deg
+  );
+  animation: cardColorBeam 8s linear infinite;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card-shine-sweep {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.card-shine-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.75) 50%,
+    transparent 100%
+  );
+  animation: cardSurfaceShine 4.5s ease-in-out infinite;
+}
+
+.dot-live-pulse {
+  animation: livePulseBlue 2s infinite ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -127,10 +249,18 @@ html {
   .animate-pulse-glow,
   .animate-appear-step-1,
   .animate-appear-step-2,
-  .animate-appear-step-3 {
+  .animate-appear-step-3,
+  .animate-font-shimmer,
+  .animate-title-shimmer,
+  .dot-live-pulse {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+  .card-shine-wrapper::before,
+  .card-shine-sweep::after {
+    animation: none;
+    display: none;
   }
   html {
     scroll-behavior: auto;
