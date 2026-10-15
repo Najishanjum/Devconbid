@@ -16,9 +16,19 @@ import { FinalCtaSection } from './components/FinalCtaSection';
 import { FooterSection } from './components/FooterSection';
 import { BidHistoryModal } from './components/BidHistoryModal';
 import { PerksModal } from './components/PerksModal';
+import { PaymentCheckoutModal } from './components/payment/PaymentCheckoutModal';
+import { SponsorshipLookupModal } from './components/payment/SponsorshipLookupModal';
 
 const MainLayout: React.FC = () => {
-  const { isBidModalOpen, setIsBidModalOpen } = useAuction();
+  const {
+    isBidModalOpen,
+    setIsBidModalOpen,
+    activePaymentSponsorshipId,
+    closePayment,
+    openPaymentFor,
+    isPaymentLookupOpen,
+    setIsPaymentLookupOpen,
+  } = useAuction();
 
   return (
     /* Outer Desktop Canvas Shell with clean Antigravity light background */
@@ -72,6 +82,24 @@ const MainLayout: React.FC = () => {
         )}
         <BidHistoryModal />
         <PerksModal />
+
+        {/* Verified Sponsorship Payment Checkout Modal */}
+        {activePaymentSponsorshipId && (
+          <PaymentCheckoutModal
+            isOpen={Boolean(activePaymentSponsorshipId)}
+            sponsorshipId={activePaymentSponsorshipId}
+            onClose={closePayment}
+          />
+        )}
+
+        {/* Sponsorship Lookup / Payment Link Finder Modal */}
+        {isPaymentLookupOpen && (
+          <SponsorshipLookupModal
+            isOpen={isPaymentLookupOpen}
+            onClose={() => setIsPaymentLookupOpen(false)}
+            onSelectSponsorship={(id) => openPaymentFor(id)}
+          />
+        )}
 
       </div>
 

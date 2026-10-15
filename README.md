@@ -56,15 +56,29 @@ npm run build
    - **Both Covers Takeover**: Exclusive dual coverage starting at **$50** combined.
 2. **Interactive Bidding Engine**:
    - Independent bidding for Cover 01 and Cover 02.
-   - Server-style validation: new bids must exceed the current highest bid.
-   - Confidential applicant information (public logs show project name and amount only).
-   - Celebration confetti on valid bid submission.
-3. **Admin Operations Panel**:
-   - Access via the **Admin** button in navigation or footer.
-   - Review pending, approved, and rejected applications.
-   - Export applications to **CSV** or **JSON**.
-   - Toggle **Demo Mode** to test with mock data or reset to a 100% clean zero-bid state.
-4. **Tour Destinations**:
+   - Real-time client & server validation: new bids must exceed the current highest bid.
+   - Confidential applicant contact info (only display name and amount shown publicly).
+3. **Confirmed Sponsorship Payment System (INR + USDC on Base)**:
+   - **Option A — INR via UPI**:
+     - Configured UPI VPA & Payee Name.
+     - Dynamic UPI QR code generated with exact locked payable amount and reference.
+     - Payer enters 12-digit UTR upon completion.
+     - Marked `pending_verification` — manual reconciliation outside the public website by the organizer.
+     - Secure CLI verification command: `npm run verify-upi -- <paymentId> [notes]`.
+   - **Option B — Native USDC on Base Mainnet**:
+     - Direct transfers to configured Base wallet (MetaMask, Trust Wallet, Phantom, etc.).
+     - No wallet connection required.
+     - Real server-side on-chain verification using Base RPC (`https://mainnet.base.org`).
+     - Verifies native USDC token contract (`0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`), ERC-20 `Transfer` event, recipient address, 6 decimal places, and block finality policy.
+     - Prevents duplicate transaction hash reuse.
+4. **Gateway Integration Readiness**:
+   - Clean `IPaymentProvider` interface for adding commercial payment gateways (Razorpay, PhonePe) once written merchant category approval is obtained.
+5. **Operational CLI Management (No Public Admin Panel)**:
+   - List sponsorships & payments: `npm run manage-sponsorships list`
+   - Generate unique winner payment link: `npm run manage-sponsorships create <01|02|both> <winningBidUsd> <winnerName> <winnerEmail>`
+   - Verify UPI payment: `npm run verify-upi <paymentId> "Verified in bank app"`
+6. **Tour Destinations**:
    - Verified details for Devcon Southeast Asia, India Blockchain Week (IBW), and ETHGlobal.
-5. **Transparency & Disclaimers**:
+7. **Transparency & Disclaimers**:
    - Clear disclosure that this is an independent creator initiative not affiliated with or endorsed by Devcon, IBW, or ETHGlobal.
+

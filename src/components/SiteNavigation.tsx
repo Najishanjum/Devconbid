@@ -3,7 +3,7 @@ import { useAuction } from '../context/AuctionContext';
 import { Menu, X } from 'lucide-react';
 
 export const SiteNavigation: React.FC = () => {
-  const { setIsBidModalOpen, setSelectedCoverForBid, setIsPerksOpen } = useAuction();
+  const { setIsBidModalOpen, setSelectedCoverForBid, setIsPerksOpen, setIsPaymentLookupOpen } = useAuction();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -71,8 +71,16 @@ export const SiteNavigation: React.FC = () => {
           ))}
         </nav>
 
-        {/* Right Actions: Dark Pill Button */}
-        <div className="flex items-center gap-3">
+        {/* Right Actions */}
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setIsPaymentLookupOpen(true)}
+            className="inline-flex items-center justify-center h-10 px-4 rounded-full bg-[#F8F7FA] border border-[#ECEBF0] text-[#22212A] text-[13px] font-medium hover:bg-[#F0EAF8] hover:border-[#A58BFA] transition-all shadow-saas-sm"
+            title="Pay for confirmed phone cover sponsorship"
+          >
+            Pay Sponsorship
+          </button>
+
           <button
             onClick={handleGetSpot}
             className="inline-flex items-center justify-center h-10 px-5 rounded-full bg-[#24232E] text-white text-[13px] font-medium hover:bg-[#353342] active:scale-[0.98] transition-all shadow-saas-sm"
@@ -108,6 +116,17 @@ export const SiteNavigation: React.FC = () => {
                 {link.name}
               </a>
             ))}
+            <div className="pt-2 border-t border-[#ECEBF0]">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setIsPaymentLookupOpen(true);
+                }}
+                className="w-full text-left py-2 px-3 rounded-lg text-[#6D28D9] font-semibold hover:bg-[#F0EAF8] transition-colors"
+              >
+                Pay Confirmed Sponsorship →
+              </button>
+            </div>
           </div>
         </div>
       )}

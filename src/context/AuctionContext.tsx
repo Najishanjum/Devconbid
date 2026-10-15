@@ -19,6 +19,13 @@ interface AuctionContextType {
   setIsPerksOpen: (open: boolean) => void;
   activeHistoryCoverId: 'cover-01' | 'cover-02';
   openHistoryFor: (coverId: 'cover-01' | 'cover-02') => void;
+
+  // Payment states
+  activePaymentSponsorshipId: string | null;
+  openPaymentFor: (sponsorshipId: string) => void;
+  closePayment: () => void;
+  isPaymentLookupOpen: boolean;
+  setIsPaymentLookupOpen: (open: boolean) => void;
   
   // Actions
   submitBid: (formData: Omit<SponsorApplication, 'id' | 'status' | 'submittedAt'>) => { success: boolean; message: string; refId?: string };
@@ -78,6 +85,36 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isPerksOpen, setIsPerksOpen] = useState(false);
   const [activeHistoryCoverId, setActiveHistoryCoverId] = useState<'cover-01' | 'cover-02'>('cover-01');
+
+  // Payment states
+  const [activePaymentSponsorshipId, setActivePaymentSponsorshipId] = useState<string | null>(null);
+  const [isPaymentLookupOpen, setIsPaymentLookupOpen] = useState(false);
+
+  // Check URL query parameters for ?pay=SPONSOR-XXXX
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payRef = params.get('pay') || params.get('payment');
+    if (payRef && payRef.trim()) {
+      setActivePaymentSponsorshipId(payRef.trim());
+    }
+  }, []);
+
+  const openPaymentFor = (sponsorshipId: string) => {
+    setActivePaymentSponsorshipId(sponsorshipId);
+    setIsPaymentLookupOpen(false);
+    // Reflect in URL without page reload
+    const url = new URL(window.location.href);
+    url.searchParams.set('pay', sponsorshipId);
+    window.history.pushState({}, '', url.toString());
+  };
+
+  const closePayment = () => {
+    setActivePaymentSponsorshipId(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('pay');
+    url.searchParams.delete('payment');
+    window.history.pushState({}, '', url.toString());
+  };
 
   // Sync to local storage
   useEffect(() => {
@@ -346,6 +383,11 @@ export const AuctionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setIsPerksOpen,
         activeHistoryCoverId,
         openHistoryFor,
+        activePaymentSponsorshipId,
+        openPaymentFor,
+        closePayment,
+        isPaymentLookupOpen,
+        setIsPaymentLookupOpen,
         submitBid,
         loadSampleDemoData,
         resetToCleanState,

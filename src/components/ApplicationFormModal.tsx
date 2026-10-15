@@ -233,8 +233,8 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
             <div><strong className="text-[#22212A]">Status:</strong> Recorded & Verified in Auction</div>
           </div>
 
-          <p className="text-xs text-[#777681] max-w-md mx-auto">
-            Your bid is active on the live board. We will contact <span className="font-semibold text-[#22212A]">{workEmail}</span> with updates and artwork requirements if you hold the winning bid at close.
+          <p className="text-xs text-[#777681] max-w-md mx-auto leading-relaxed">
+            Your bid is active on the live board. When the auction concludes, the winning sponsor receives an official sponsorship payment link to settle via <strong className="text-[#22212A]">UPI (INR)</strong> or <strong className="text-[#22212A]">native USDC (Base)</strong>. Payments are strictly collected only after winning bid confirmation.
           </p>
 
           <button
