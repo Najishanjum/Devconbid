@@ -82,3 +82,4 @@ npm run build
 7. **Transparency & Disclaimers**:
    - Clear disclosure that this is an independent creator initiative not affiliated with or endorsed by Devcon, IBW, or ETHGlobal.
 
+Built by najish   for devcon
