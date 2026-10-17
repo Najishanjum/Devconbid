@@ -284,22 +284,28 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#1F1E29]/65 backdrop-blur-[6px] overflow-y-auto animate-in fade-in">
-      <div className="bg-white rounded-[24px] border border-[#ECEBF0] shadow-[0_25px_70px_rgba(0,0,0,0.18)] max-w-2xl w-full my-6 overflow-hidden relative text-[#22212A]">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/45 overflow-y-auto animate-in fade-in"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-[22px] border border-[#ECEBF0] shadow-[0_20px_50px_rgba(0,0,0,0.18)] max-w-[560px] w-full my-auto max-h-[86vh] flex flex-col overflow-hidden relative text-[#22212A]"
+      >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[#ECEBF0] bg-[#FCFCFD]">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-[#24232E] text-white flex items-center justify-center shadow-saas-sm">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#ECEBF0] bg-[#FCFCFD] shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-[#24232E] text-white flex items-center justify-center shadow-saas-sm">
               <ShieldCheck className="w-4 h-4 text-[#A58BFA]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#7C3AED]">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#7C3AED]">
                   Official Sponsorship Checkout
                 </span>
                 {activePayment && (
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${
                       activePayment.paymentStatus === 'confirmed'
                         ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                         : activePayment.paymentStatus === 'pending_verification'
@@ -313,7 +319,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   </span>
                 )}
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[#22212A]">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[#22212A]">
                 {sponsorship ? sponsorship.coverSlotDisplay : 'Sponsorship Payment'}
               </h2>
             </div>
@@ -321,7 +327,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-[#777681] hover:text-[#22212A] hover:bg-[#F8F7FA] transition-colors"
+            className="p-1.5 rounded-full text-[#777681] hover:text-[#22212A] hover:bg-[#F8F7FA] transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -329,7 +335,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-6 max-h-[82vh] overflow-y-auto">
+        <div className="p-4 sm:p-5 space-y-4 overflow-y-auto flex-1">
           {loading ? (
             <div className="py-16 text-center space-y-3">
               <RefreshCw className="w-7 h-7 text-[#A58BFA] animate-spin mx-auto" />
@@ -523,19 +529,19 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                       </div>
 
                       {/* QR Code and Payee Details Layout */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
                         {/* QR Code */}
-                        <div className="flex flex-col items-center justify-center p-4 bg-[#F8F7FA] rounded-2xl border border-[#ECEBF0] text-center">
+                        <div className="flex flex-col items-center justify-center p-3.5 bg-[#F8F7FA] rounded-xl border border-[#ECEBF0] text-center">
                           {config?.upiQrImageUrl ? (
                             <img
                               src={config.upiQrImageUrl}
                               alt="Configured UPI QR"
-                              className="w-44 h-44 object-contain rounded-xl border border-white shadow-sm"
+                              className="w-36 h-36 object-contain rounded-lg border border-white shadow-sm"
                             />
                           ) : (
-                            <QrCodeCanvas value={getDynamicUpiUri()} size={180} altText="UPI Payment QR" />
+                            <QrCodeCanvas value={getDynamicUpiUri()} size={145} altText="UPI Payment QR" />
                           )}
-                          <div className="mt-3 text-[11px] text-[#777681]">
+                          <div className="mt-2 text-[10px] text-[#777681]">
                             Compatible with PhonePe, Google Pay, Paytm, BHIM & bank apps.
                           </div>
                         </div>
@@ -666,14 +672,14 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                       </div>
 
                       {/* QR Code and Wallet Details */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
-                        <div className="flex flex-col items-center justify-center p-4 bg-[#F8F7FA] rounded-2xl border border-[#ECEBF0] text-center">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                        <div className="flex flex-col items-center justify-center p-3.5 bg-[#F8F7FA] rounded-xl border border-[#ECEBF0] text-center">
                           <QrCodeCanvas
                             value={config?.baseReceiverAddress || ''}
-                            size={180}
+                            size={145}
                             altText="Base Receiving Wallet QR"
                           />
-                          <div className="mt-3 text-[11px] text-[#777681]">
+                          <div className="mt-2 text-[10px] text-[#777681]">
                             Scan with your mobile wallet app to send native USDC.
                           </div>
                         </div>
@@ -774,14 +780,14 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 bg-[#FCFCFD] border-t border-[#ECEBF0] flex items-center justify-between text-xs text-[#777681]">
+        <div className="px-5 py-3 bg-[#FCFCFD] border-t border-[#ECEBF0] flex items-center justify-between text-[11px] text-[#777681] shrink-0">
           <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Secure settlement · No private keys ever requested</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Secure settlement · No private keys requested</span>
           </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-full hover:bg-[#F8F7FA] text-[#22212A] font-medium"
+            className="px-3.5 py-1 rounded-full hover:bg-[#F8F7FA] text-[#22212A] font-medium"
           >
             Close
           </button>

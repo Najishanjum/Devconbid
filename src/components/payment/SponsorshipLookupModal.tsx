@@ -45,8 +45,14 @@ export const SponsorshipLookupModal: React.FC<SponsorshipLookupModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1F1E29]/65 backdrop-blur-[6px] animate-in fade-in">
-      <div className="bg-white rounded-[24px] border border-[#ECEBF0] shadow-[0_20px_60px_rgba(0,0,0,0.15)] max-w-md w-full p-6 space-y-5 text-[#22212A]">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/45 animate-in fade-in"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-[22px] border border-[#ECEBF0] shadow-[0_20px_50px_rgba(0,0,0,0.18)] max-w-md w-full p-5 sm:p-6 space-y-4 text-[#22212A] max-h-[85vh] overflow-y-auto my-auto"
+      >
         <div className="flex items-center justify-between pb-3 border-b border-[#ECEBF0]">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-[#24232E] text-white flex items-center justify-center">

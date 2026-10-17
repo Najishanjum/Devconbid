@@ -478,11 +478,11 @@ export const ApplicationFormModal: React.FC<ApplicationFormModalProps> = ({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm overflow-y-auto animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/45 overflow-y-auto animate-in fade-in"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[540px] my-6 max-h-[90vh] overflow-y-auto rounded-[24px]"
+        className="relative w-full max-w-[540px] my-auto max-h-[86vh] overflow-y-auto rounded-[22px]"
       >
         {formContent}
       </div>

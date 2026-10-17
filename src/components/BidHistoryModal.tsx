@@ -25,7 +25,7 @@ export const BidHistoryModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-in fade-in">
       <div className="relative w-full max-w-lg bg-white border border-[#ECEBF0] rounded-[24px] p-6 shadow-saas-lg max-h-[85vh] flex flex-col">
         
         {/* Header */}

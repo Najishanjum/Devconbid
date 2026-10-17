@@ -27,7 +27,7 @@ export const PerksModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-in fade-in overflow-y-auto">
       <div className="relative w-full max-w-3xl bg-white border border-[#ECEBF0] rounded-[24px] p-6 sm:p-8 shadow-saas-lg my-8 max-h-[88vh] flex flex-col">
         
         {/* Header */}
