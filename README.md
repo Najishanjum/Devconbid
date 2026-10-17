@@ -81,6 +81,8 @@ npm run build
    - Verified details for Devcon Southeast Asia, India Blockchain Week (IBW), and ETHGlobal.
 7. **Transparency & Disclaimers**:
    - Clear disclosure that this is an independent creator initiative not affiliated with or endorsed by Devcon, IBW, or ETHGlobal.
+  
+   ETHMumbai
 
 Built by najish   for devcon
 IBW 
