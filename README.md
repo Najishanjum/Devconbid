@@ -5,7 +5,7 @@
 ---
 
 ## 🚀 Live Application
-
+Live now
 The redesigned application is active and running locally at:
 👉 **`http://localhost:5173/`**
 
