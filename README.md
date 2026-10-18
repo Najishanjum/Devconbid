@@ -2,7 +2,7 @@
 
 > **A minimal, elegant SaaS design for an independent physical phone-cover sponsorship auction targeting Devcon, India Blockchain Week (IBW), and ETHGlobal.**
 
----
+---  
 
 ## 🚀 Live Application
 Live now
